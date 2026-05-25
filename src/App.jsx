@@ -1,25 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LogInAndReges from "./Pages/LoginOrRefs"
 export default function App() {
   return (
     <>
       <div
         className="
+      overflow-hidden
       w-full 
-      h-screen
+      h-dvh
       bg-background
-      border-Im2
-      border-10
-      rounded-4xl
       text-font
       font-Jungle
       flex
       justify-center
       items-center
+      flex-col
       "
       >
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={LogInAndReges}/>
+            <Route path="/" element={<LogInAndReges/>}/>
           </Routes>
         </BrowserRouter>
       </div>

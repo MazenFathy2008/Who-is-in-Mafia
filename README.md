@@ -2,4 +2,5 @@
 -React.
 -Tailwindcss.
 -React-router-dom
--vite
+-vit
+-motion framer

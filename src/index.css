@@ -2,6 +2,9 @@
   font-family: Jungle-Adventurer;
   src: url(/font/JungleAdventurer.ttf);
 }
+*{
+  box-sizing: border-box;
+}
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 @theme{
