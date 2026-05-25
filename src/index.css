@@ -1,1 +1,14 @@
+@font-face {
+  font-family: Jungle-Adventurer;
+  src: url(/font/JungleAdventurer.ttf);
+}
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme{
+  --color-background: #d27070;
+  --color-font: #f7e5d9;
+  --color-subBg:#f0b799;
+  --color-Im1:#4b0c0c;
+  --color-Im2:#982a2a;
+  --font-Jungle : Jungle-Adventurer,sans-serif
+}
