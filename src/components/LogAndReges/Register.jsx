@@ -11,6 +11,7 @@ export default function Register({flipped,time,setFlipped}){
         rotateY:180,
         opacity: !flipped?0:1,
         y: !flipped?100:0,
+        pointerEvents: !flipped ? "none" : "auto"
       }}
       transition={{
         duration: time,

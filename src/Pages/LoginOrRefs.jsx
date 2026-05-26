@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import Main from "../components/Main.jsx";
+import Main from "../components/LogAndReges/Main";
 export default function LogInOrRegs() {
   return (
     <motion.div
