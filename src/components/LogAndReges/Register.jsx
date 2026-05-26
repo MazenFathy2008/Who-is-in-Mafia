@@ -1,7 +1,11 @@
 import {motion} from "motion/react"
+import {useState} from "react"
 import {labelStyles,inputStyles,containerStyles,buttonStyles} from "./styles"
 export default function Register({flipped,time,setFlipped}){
-
+const [showPassword,setPasswordState] = useState(false)
+  const handleClick = ()=>{
+    setPasswordState(prev=>!prev)
+  }
   return(
     <motion.div 
     initial={
@@ -40,10 +44,12 @@ export default function Register({flipped,time,setFlipped}){
       >
         <input
           type="email"
-          name="email"
+          name="emailRegs"
           id="emailRegs"
-          autoComplete="none"
+          autoComplete={false}
           className={inputStyles}
+          placeholder=" "
+
         />
         <label htmlFor="emailRegs" className={labelStyles}>
           Enter Your Email
@@ -56,8 +62,10 @@ export default function Register({flipped,time,setFlipped}){
           type="text"
           name="userName"
           id="userNameRegs"
-          autoComplete="none"
+          autoComplete={false}
           className={inputStyles}
+          placeholder=" "
+
         />
         <label htmlFor="userNameRegs" className={labelStyles}>
           Enter Your Username
@@ -65,10 +73,17 @@ export default function Register({flipped,time,setFlipped}){
       </div>
       <div className={containerStyles}>
         <input
-          type="password"
+          type={showPassword?"text":"password"}
           name="passwordRegs"
           id="passwordRegs"
           className={inputStyles}
+          placeholder=" "
+
+        />
+        <img 
+        src={showPassword?"/Icons/hide.png":"/Icons/show.png"} 
+        onClick={handleClick}
+        className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
         />
         <label htmlFor="passwordRegs" className={labelStyles}>
           Enter Your Password
@@ -80,7 +95,7 @@ export default function Register({flipped,time,setFlipped}){
             setFlipped((prev) => !prev);
           }}
           type="button"
-        >Log In
+        >Already have an account? Log In
       </button>
     </motion.div>
   )

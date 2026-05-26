@@ -15,6 +15,13 @@ const labelStyles = `
           peer-focus:sm:left-10 
           peer-focus:scale-125
           peer-focus:sm:scale-150
+          peer-not-placeholder-shown:opacity-100
+          peer-not-placeholder-shown:-top-5
+          peer-not-placeholder-shown:left-5 
+          peer-not-placeholder-shown:sm:left-10 
+          peer-not-placeholder-shown:scale-125 
+          peer-not-placeholder-shown:sm:scale-150
+
   `;
   const inputStyles = `
         border-3
@@ -41,5 +48,8 @@ const labelStyles = `
   hover:scale-125
   transtion
   duration-200
+  border-b-xl
+  border-b-font
+  underline
   `
 export {inputStyles,labelStyles,containerStyles,buttonStyles}

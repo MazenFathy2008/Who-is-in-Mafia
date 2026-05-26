@@ -5,7 +5,12 @@ import {
   inputStyles,
   buttonStyles,
 } from "./styles";
+import {useState} from "react"
 export default function LogIn({ flipped, time, setFlipped }) {
+  const [showPassword,setPasswordState] = useState(false)
+  const handleClick = ()=>{
+    setPasswordState(prev=>!prev)
+  }
   return (
     <motion.div
       animate={{
@@ -34,8 +39,10 @@ export default function LogIn({ flipped, time, setFlipped }) {
           type="email"
           name="emailLog"
           id="emailLog"
-          autoComplete="none"
+          autoComplete={false}
           className={inputStyles}
+          placeholder=" "
+
         />
         <label htmlFor="emailLog" className={labelStyles}>
           Enter Your Email
@@ -44,14 +51,20 @@ export default function LogIn({ flipped, time, setFlipped }) {
 
       <div className={containerStyles}>
         <input
-          type="password"
+          type={showPassword?"text":"password"}
           name="passwordLog"
           id="passwordLog"
           className={inputStyles}
+          placeholder=" "
         />
         <label htmlFor="passwordLog" className={labelStyles}>
           Enter Your Password
         </label>
+        <img 
+        src={showPassword?"/Icons/hide.png":"/Icons/show.png"} 
+        onClick={handleClick}
+        className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
+        />
       </div>
       <button
         className={buttonStyles}
@@ -60,7 +73,7 @@ export default function LogIn({ flipped, time, setFlipped }) {
         }}
         type="button"
       >
-        Register
+        Don't have An account? Register
       </button>
     </motion.div>
   );

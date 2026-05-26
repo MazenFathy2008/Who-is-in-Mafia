@@ -40,7 +40,7 @@ export default function Main() {
       flex
       "
       >
-        Who Is
+        Who Is In
         <img
           src="/Icons/M-icon.png"
           className="
