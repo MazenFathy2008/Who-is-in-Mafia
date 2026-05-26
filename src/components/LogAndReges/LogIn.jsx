@@ -5,6 +5,7 @@ import {
   inputStyles,
   buttonStyles,
 } from "./styles";
+import Submit from "./submit"
 import {useState} from "react"
 export default function LogIn({ flipped, time, setFlipped }) {
   const [showPassword,setPasswordState] = useState(false)
@@ -29,8 +30,8 @@ export default function LogIn({ flipped, time, setFlipped }) {
       flex
       flex-col
       items-center
-      gap-30
-      sm:gap-20
+      gap-20
+      sm:gap-15
       "
     >
       <h2 className="text-2xl">Please Log In</h2>
@@ -66,6 +67,7 @@ export default function LogIn({ flipped, time, setFlipped }) {
         className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
         />
       </div>
+      <Submit page="Log In"/>
       <button
         className={buttonStyles}
         onClick={() => {

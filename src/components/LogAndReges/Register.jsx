@@ -1,5 +1,6 @@
 import {motion} from "motion/react"
 import {useState} from "react"
+import Submit from "./submit"
 import {labelStyles,inputStyles,containerStyles,buttonStyles} from "./styles"
 export default function Register({flipped,time,setFlipped}){
 const [showPassword,setPasswordState] = useState(false)
@@ -23,17 +24,15 @@ const [showPassword,setPasswordState] = useState(false)
         duration: time,
       }}
     className="
-    
     absolute 
-    inset-0 
-    rotate-y-180 
-    flex 
-    flex-col
-    p-5
-    sm:p-7 
-    itmes-center
-    gap-20
-    sm:gap-15
+      inset-0 
+      p-5
+      sm:p-7
+      flex
+      flex-col
+      items-center
+    gap-14
+    sm:gap-10
     "
     >
       <h2 className="text-2xl text-center">
@@ -89,6 +88,7 @@ const [showPassword,setPasswordState] = useState(false)
           Enter Your Password
         </label>
       </div>
+      <Submit page="Register"/>   
       <button
           className={buttonStyles}
           onClick={() => {
