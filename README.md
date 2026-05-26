@@ -1,6 +1,6 @@
-#Tech stack
--React.
--Tailwindcss.
--React-router-dom
--vit
--motion framer
+# Tech stack
+- React.
+- Tailwindcss.
+- React-router-dom
+- vite
+- motion framer

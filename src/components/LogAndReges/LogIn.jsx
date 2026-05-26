@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
-import {labelStyles,containerStyles,inputStyles,buttonStyles} from "./styles"
+import {
+  labelStyles,
+  containerStyles,
+  inputStyles,
+  buttonStyles,
+} from "./styles";
 export default function LogIn({ flipped, time, setFlipped }) {
-  
   return (
     <motion.div
       animate={{
@@ -25,33 +29,29 @@ export default function LogIn({ flipped, time, setFlipped }) {
       "
     >
       <h2 className="text-2xl">Please Log In</h2>
-      <div
-        className={containerStyles}
-      >
+      <div className={containerStyles}>
         <input
           type="email"
-          name="email"
-          id="email"
+          name="emailLog"
+          id="emailLog"
           autoComplete="none"
           className={inputStyles}
         />
-        <label htmlFor="email" className={labelStyles}>
+        <label htmlFor="emailLog" className={labelStyles}>
           Enter Your Email
         </label>
       </div>
 
-      <div 
-      className={containerStyles}
-      >
-        <input 
-        type="password" 
-        name="password" 
-        id="password" 
-        className={inputStyles}/>
-        <label 
-        htmlFor="password"
-        className={labelStyles}
-        >Enter Your Password</label>
+      <div className={containerStyles}>
+        <input
+          type="password"
+          name="passwordLog"
+          id="passwordLog"
+          className={inputStyles}
+        />
+        <label htmlFor="passwordLog" className={labelStyles}>
+          Enter Your Password
+        </label>
       </div>
       <button
         className={buttonStyles}
