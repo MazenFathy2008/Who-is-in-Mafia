@@ -1,8 +1,15 @@
 import { button } from "motion/react-client";
 
-export default function Submit({page}){
+export default function Submit({page,data}){
+  const handleClick=()=>{
+    if(page=="Log In"){
+      console.log(`Log in data ${data}`)
+    }else if(page == "Register"){
+      console.log(`Registering data ${data}`)
+    }
+  }
   return(
-    <button type="submit" className="
+    <button type="button" className="
     border-2
     w-1/3
     h-full
@@ -15,7 +22,9 @@ export default function Submit({page}){
   transtion
   duration-200
   active:scale-120
-    ">
+    "
+    onClick={handleClick}
+    >
       {page}
     </button>
   )

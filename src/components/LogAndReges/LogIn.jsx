@@ -7,10 +7,21 @@ import {
 } from "./styles";
 import Submit from "./submit"
 import {useState} from "react"
+import { use } from "motion/react-m";
 export default function LogIn({ flipped, time, setFlipped }) {
   const [showPassword,setPasswordState] = useState(false)
+  const [data,setData]=useState({})
   const handleClick = ()=>{
     setPasswordState(prev=>!prev)
+  }
+  const handleChange = (event)=>{
+    setData((prev)=>{
+      const {name,value} = event.target
+      return{
+        ...prev,
+        [name]:value
+      }
+    })
   }
   return (
     <motion.div
@@ -40,10 +51,11 @@ export default function LogIn({ flipped, time, setFlipped }) {
           type="email"
           name="emailLog"
           id="emailLog"
-          autoComplete={false}
+          autoComplete="off"
           className={inputStyles}
           placeholder=" "
-
+          value={data.emailLog||""}
+          onChange={handleChange}
         />
         <label htmlFor="emailLog" className={labelStyles}>
           Enter Your Email
@@ -57,6 +69,9 @@ export default function LogIn({ flipped, time, setFlipped }) {
           id="passwordLog"
           className={inputStyles}
           placeholder=" "
+          onChange={handleChange}
+          value={data.passwordLog||""}
+
         />
         <label htmlFor="passwordLog" className={labelStyles}>
           Enter Your Password
@@ -67,11 +82,12 @@ export default function LogIn({ flipped, time, setFlipped }) {
         className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
         />
       </div>
-      <Submit page="Log In"/>
+      <Submit page="Log In" data={data}/>
       <button
         className={buttonStyles}
         onClick={() => {
-          setFlipped((prev) => !prev);
+          setData({})
+          setFlipped((prev) => !prev)
         }}
         type="button"
       >
