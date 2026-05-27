@@ -11,8 +11,8 @@ import { use } from "motion/react-m";
 export default function LogIn({ setErrors, flipped, time, setFlipped }) {
   const [showPassword, setPasswordState] = useState(false);
   const [data, setData] = useState({
-    emailLog:"",
-    passwordLog:""
+    emailLog: "",
+    passwordLog: "",
   });
   const handleClick = () => {
     setPasswordState((prev) => !prev);
@@ -88,7 +88,10 @@ export default function LogIn({ setErrors, flipped, time, setFlipped }) {
       <button
         className={buttonStyles}
         onClick={() => {
-          setData({});
+          setData({
+            emailLog: "",
+            passwordLog: "",
+          });
           setFlipped((prev) => !prev);
         }}
         type="button"

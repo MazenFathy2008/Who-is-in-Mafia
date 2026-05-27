@@ -7,12 +7,12 @@ import {
   containerStyles,
   buttonStyles,
 } from "./styles";
-export default function Register({ setErrors,flipped, time, setFlipped }) {
+export default function Register({ setErrors, flipped, time, setFlipped }) {
   const [showPassword, setPasswordState] = useState(false);
   const [data, setData] = useState({
-    emailRegs:"",
-    passwordRegs:"",
-    userName:""
+    emailRegs: "",
+    passwordRegs: "",
+    userName: "",
   });
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -77,7 +77,6 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
           placeholder=" "
           onChange={handleChange}
           value={data.userName}
-
         />
         <label htmlFor="userNameRegs" className={labelStyles}>
           Enter Your Username
@@ -92,7 +91,6 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
           onChange={handleChange}
           placeholder=" "
           value={data.passwordRegs}
-
         />
         <img
           src={showPassword ? "/Icons/hide.png" : "/Icons/show.png"}
@@ -103,11 +101,17 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
           Enter Your Password
         </label>
       </div>
-      <Submit page="Register" data={data} setErrors={setErrors}/>
+      <Submit page="Register" data={data} setErrors={setErrors} />
       <button
         className={buttonStyles}
         onClick={() => {
-          setData(()=>{return {}})
+          setData(() => {
+            return {
+              emailRegs: "",
+              passwordRegs: "",
+              userName: "",
+            };
+          });
           setFlipped((prev) => !prev);
         }}
         type="button"
