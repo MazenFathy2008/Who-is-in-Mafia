@@ -3,7 +3,7 @@ import { useState } from "react";
 import LogIn from "./LogIn";
 import Register from "./Register";
 import { span } from "motion/react-client";
-export default function Main() {
+export default function Main({setErrors}) {
   const [flipped, setFlipped] = useState(false);
   const time = 1;
   return (
@@ -70,8 +70,8 @@ export default function Main() {
               transform-3d
     "
       >
-        <LogIn flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
-        <Register flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
+        <LogIn setErrors={setErrors}flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
+        <Register setErrors={setErrors}flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
       </motion.form>
     </div>
   );

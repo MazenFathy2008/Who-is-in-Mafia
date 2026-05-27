@@ -1,7 +1,8 @@
-import { button } from "motion/react-client";
-
-export default function Submit({page,data}){
+export default function Submit({setErrors,page,data}){
   const handleClick=()=>{
+    setErrors((prev)=>{
+      return[...prev,"New error"]
+    })
     if(page=="Log In"){
       console.log(`Log in data ${data}`)
     }else if(page == "Register"){

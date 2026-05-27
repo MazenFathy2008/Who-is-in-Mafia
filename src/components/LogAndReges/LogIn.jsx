@@ -8,7 +8,7 @@ import {
 import Submit from "./submit"
 import {useState} from "react"
 import { use } from "motion/react-m";
-export default function LogIn({ flipped, time, setFlipped }) {
+export default function LogIn({ setErrors,flipped, time, setFlipped }) {
   const [showPassword,setPasswordState] = useState(false)
   const [data,setData]=useState({})
   const handleClick = ()=>{
@@ -82,7 +82,7 @@ export default function LogIn({ flipped, time, setFlipped }) {
         className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
         />
       </div>
-      <Submit page="Log In" data={data}/>
+      <Submit page="Log In" data={data} setErrors={setErrors}/>
       <button
         className={buttonStyles}
         onClick={() => {

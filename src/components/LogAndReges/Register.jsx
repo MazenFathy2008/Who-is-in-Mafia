@@ -7,7 +7,7 @@ import {
   containerStyles,
   buttonStyles,
 } from "./styles";
-export default function Register({ flipped, time, setFlipped }) {
+export default function Register({ setErrors,flipped, time, setFlipped }) {
   const [showPassword, setPasswordState] = useState(false);
   const [data, setData] = useState({});
   const handleChange = (event)=>{
@@ -99,7 +99,7 @@ export default function Register({ flipped, time, setFlipped }) {
           Enter Your Password
         </label>
       </div>
-      <Submit page="Register" data={data} />
+      <Submit page="Register" data={data} setErrors={setErrors}/>
       <button
         className={buttonStyles}
         onClick={() => {
