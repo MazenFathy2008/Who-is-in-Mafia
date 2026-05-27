@@ -1,16 +1,23 @@
-export default function Submit({setErrors,page,data}){
-  const handleClick=()=>{
-    setErrors((prev)=>{
-      return[...prev,"New error"]
-    })
-    if(page=="Log In"){
-      console.log(`Log in data ${data}`)
-    }else if(page == "Register"){
-      console.log(`Registering data ${data}`)
-    }
-  }
-  return(
-    <button type="button" className="
+export default function Submit({ setErrors, page, data }) {
+  const handleClick = () => {
+    const id = Date.now();
+    setErrors((prev) => {
+      return [
+        {
+          id: id,
+          msg: "New error",
+        },
+        ...prev,
+      ];
+    });
+    setTimeout(() => {
+      setErrors((prev) => prev.filter((e) => e.id !== id));
+    }, 5000);
+  };
+  return (
+    <button
+      type="button"
+      className="
     border-2
     w-1/3
     h-full
@@ -24,9 +31,9 @@ export default function Submit({setErrors,page,data}){
   duration-200
   active:scale-120
     "
-    onClick={handleClick}
+      onClick={handleClick}
     >
       {page}
     </button>
-  )
+  );
 }
