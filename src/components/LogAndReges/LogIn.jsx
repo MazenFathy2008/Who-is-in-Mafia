@@ -5,24 +5,27 @@ import {
   inputStyles,
   buttonStyles,
 } from "./styles";
-import Submit from "./submit"
-import {useState} from "react"
+import Submit from "./submit";
+import { useState } from "react";
 import { use } from "motion/react-m";
-export default function LogIn({ setErrors,flipped, time, setFlipped }) {
-  const [showPassword,setPasswordState] = useState(false)
-  const [data,setData]=useState({})
-  const handleClick = ()=>{
-    setPasswordState(prev=>!prev)
-  }
-  const handleChange = (event)=>{
-    setData((prev)=>{
-      const {name,value} = event.target
-      return{
+export default function LogIn({ setErrors, flipped, time, setFlipped }) {
+  const [showPassword, setPasswordState] = useState(false);
+  const [data, setData] = useState({
+    emailLog:"",
+    passwordLog:""
+  });
+  const handleClick = () => {
+    setPasswordState((prev) => !prev);
+  };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setData((prev) => {
+      return {
         ...prev,
-        [name]:value
-      }
-    })
-  }
+        [name]: value.replace(/\s/g, ""),
+      };
+    });
+  };
   return (
     <motion.div
       animate={{
@@ -48,14 +51,14 @@ export default function LogIn({ setErrors,flipped, time, setFlipped }) {
       <h2 className="text-2xl">Please Log In</h2>
       <div className={containerStyles}>
         <input
-          type="email"
+          type="text"
           name="emailLog"
           id="emailLog"
           autoComplete="off"
           className={inputStyles}
-          placeholder=" "
-          value={data.emailLog||""}
+          placeholder=""
           onChange={handleChange}
+          value={data.emailLog}
         />
         <label htmlFor="emailLog" className={labelStyles}>
           Enter Your Email
@@ -64,30 +67,29 @@ export default function LogIn({ setErrors,flipped, time, setFlipped }) {
 
       <div className={containerStyles}>
         <input
-          type={showPassword?"text":"password"}
+          type={showPassword ? "text" : "password"}
           name="passwordLog"
           id="passwordLog"
           className={inputStyles}
-          placeholder=" "
+          placeholder=""
           onChange={handleChange}
-          value={data.passwordLog||""}
-
+          value={data.passwordLog}
         />
         <label htmlFor="passwordLog" className={labelStyles}>
           Enter Your Password
         </label>
-        <img 
-        src={showPassword?"/Icons/hide.png":"/Icons/show.png"} 
-        onClick={handleClick}
-        className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
+        <img
+          src={showPassword ? "/Icons/hide.png" : "/Icons/show.png"}
+          onClick={handleClick}
+          className="w-7 absolute top-1/2 -translate-y-1/2 right-3"
         />
       </div>
-      <Submit page="Log In" data={data} setErrors={setErrors}/>
+      <Submit page="Log In" data={data} setErrors={setErrors} />
       <button
         className={buttonStyles}
         onClick={() => {
-          setData({})
-          setFlipped((prev) => !prev)
+          setData({});
+          setFlipped((prev) => !prev);
         }}
         type="button"
       >

@@ -5,6 +5,9 @@
 *{
   box-sizing: border-box;
 }
+input{
+  font-family: sans-serif
+}
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 @theme{

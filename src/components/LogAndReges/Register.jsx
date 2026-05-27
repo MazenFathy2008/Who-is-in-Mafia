@@ -9,16 +9,20 @@ import {
 } from "./styles";
 export default function Register({ setErrors,flipped, time, setFlipped }) {
   const [showPassword, setPasswordState] = useState(false);
-  const [data, setData] = useState({});
-  const handleChange = (event)=>{
-    setData((prev)=>{
-      const {name,value} = event.target
-      return{
+  const [data, setData] = useState({
+    emailRegs:"",
+    passwordRegs:"",
+    userName:""
+  });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setData((prev) => {
+      return {
         ...prev,
-        [name]:value
-      }
-    })
-  }
+        [name]: value.replace(/\s/g, ""),
+      };
+    });
+  };
   const handleClick = () => {
     setPasswordState((prev) => !prev);
   };
@@ -50,14 +54,14 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
       <h2 className="text-2xl text-center">Please Register</h2>
       <div className={containerStyles}>
         <input
-          type="email"
+          type="text"
           name="emailRegs"
           id="emailRegs"
           autoComplete={false}
           className={inputStyles}
           placeholder=" "
           onChange={handleChange}
-          value={data.emailRegs|| ""}
+          value={data.emailRegs}
         />
         <label htmlFor="emailRegs" className={labelStyles}>
           Enter Your Email
@@ -72,7 +76,7 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
           className={inputStyles}
           placeholder=" "
           onChange={handleChange}
-          value={data.userName||""}
+          value={data.userName}
 
         />
         <label htmlFor="userNameRegs" className={labelStyles}>
@@ -87,7 +91,7 @@ export default function Register({ setErrors,flipped, time, setFlipped }) {
           className={inputStyles}
           onChange={handleChange}
           placeholder=" "
-          value={data.passwordRegs||""}
+          value={data.passwordRegs}
 
         />
         <img
