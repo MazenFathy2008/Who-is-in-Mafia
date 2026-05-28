@@ -2,19 +2,19 @@
   font-family: Jungle-Adventurer;
   src: url(/font/JungleAdventurer.ttf);
 }
-*{
+* {
   box-sizing: border-box;
 }
-input{
-  font-family: sans-serif
+input {
+  font-family: sans-serif;
 }
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
-@theme{
-  --color-background: #d27070;
-  --color-font:#2b1b1b;
-  --color-subBg:#f0b799;
-  --color-Im1:#4b0c0c;
-  --color-Im2:#982a2a;
-  --font-Jungle : Jungle-Adventurer,sans-serif
+@theme {
+  --color-background: #0f0b0b;
+  --color-font: #f3e9e9;
+  --color-subBg: #1b1414;
+  --color-Im1: #7a1515;
+  --color-Im2: #c23b3b;
+  --font-Jungle: Jungle-Adventurer, sans-serif;
 }

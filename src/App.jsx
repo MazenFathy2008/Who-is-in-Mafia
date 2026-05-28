@@ -22,7 +22,7 @@ export default function App() {
       overflow-hidden
       w-full 
       h-dvh
-      bg-background
+      bg-linear-to-br from-[#1a0b0b] via-[#2a0f14] to-[#0f172a]
       text-font
       font-Jungle
       flex

@@ -46,6 +46,7 @@ export default function Main({setErrors}) {
           className="
         w-10
         ml-2
+        animate-bounce
         "
         />
         afia
@@ -58,8 +59,8 @@ export default function Main({setErrors}) {
         className="
               w-full
               h-full
-              bg-subBg
-              border-Im1
+              bg-subBg/40
+              border-Im1 backdrop-blur-md
               border-4
               rounded-4xl
               z-10
