@@ -1,11 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import {
   checkEmail,
   checkPassword,
   checkUserName,
 } from "../../auth/dataValidation";
 import handleRegs from "../../auth/handleRegs";
-import handleLogin from "../../auth/handleogin";
+import useHandleLogin from "../../auth/handleogin";
 export default function Submit({ setErrors, page, data }) {
+  const navigate = useNavigate()
   const throwError = (msg) => {
     const id = Date.now();
     setErrors((prev) => {
@@ -33,10 +35,10 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        handleRegs(email, password,userName, throwError);
+        handleRegs(email, password,userName, throwError,navigate);
       }
     } else if (page == "Log In") {
-      handleLogin(email, password, throwError);
+      useHandleLogin(email, password, throwError,navigate);
     }
   };
   return (

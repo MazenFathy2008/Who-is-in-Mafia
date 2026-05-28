@@ -1,13 +1,15 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
-export default async function handleLogin(email, password, throwError) {
+
+export default async function useHandleLogin(email, password, throwError,navigate) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    navigate("/homepage");
   } catch (err) {
     if (err.code == "auth/invalid-credential") {
       throwError("Invalid email or password");
     } else {
-      console.log(err.code);
+      console.log(err);
     }
   }
 }

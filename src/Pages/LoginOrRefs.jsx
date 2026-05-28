@@ -1,7 +1,12 @@
 import { motion, AnimatePresence } from "motion/react";
 import Main from "../components/LogAndReges/Main";
-import { useState } from "react";
+import { auth } from "../config/firebase";
+import { signOut } from "firebase/auth";
+import { useEffect, useState } from "react";
 export default function LogInOrRegs() {
+  useEffect(() => {
+    signOut(auth);
+  }, []);
   const [errors, setErrors] = useState([]);
   return (
     <motion.div
@@ -58,11 +63,9 @@ export default function LogInOrRegs() {
                 animate={{
                   x: 0,
                 }}
-                exit={
-                  {
-                    x:1000
-                  }
-                }
+                exit={{
+                  x: 1000,
+                }}
                 transition={{
                   duration: 0.5,
                 }}
