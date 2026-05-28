@@ -33,7 +33,7 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        handleRegs(email, password, throwError);
+        handleRegs(email, password,userName, throwError);
       }
     } else if (page == "Log In") {
       handleLogin(email, password, throwError);

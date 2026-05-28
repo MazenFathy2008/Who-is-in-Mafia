@@ -58,7 +58,7 @@ export default function Register({ setErrors, flipped, time, setFlipped }) {
           type="text"
           name="emailRegs"
           id="emailRegs"
-          autoComplete={false}
+          autoComplete="off"
           className={inputStyles}
           placeholder=" "
           onChange={handleChange}
@@ -73,7 +73,7 @@ export default function Register({ setErrors, flipped, time, setFlipped }) {
           type="text"
           name="userName"
           id="userNameRegs"
-          autoComplete={false}
+          autoComplete="off"
           className={inputStyles}
           placeholder=" "
           onChange={handleChange}

@@ -13,7 +13,6 @@ export default async function handleRegs(email,password,userName,throwError) {
       friends:[]
     })
   } catch (err) {
-    console.log(err.code)
     throwError("This email  is already exsist");
   }
 }
