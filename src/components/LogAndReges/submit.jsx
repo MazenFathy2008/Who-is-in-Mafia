@@ -26,7 +26,7 @@ export default function Submit({ setErrors, page, data }) {
     const password = data.passwordLog || data.passwordRegs || "";
     const userName = data.userName || "";
     if (!checkEmail(email)) {
-      throwError("This is an invalid Email formate please Enter A valid one");
+      throwError("This is an invalid Email format please Enter A valid one");
     } else if (!checkPassword(password)) {
       throwError("This is a weak password");
     } else if (page == "Register") {
@@ -45,7 +45,7 @@ export default function Submit({ setErrors, page, data }) {
       className="
     border-2
     w-1/3
-    h-full
+    h-16
     rounded-md cursor-pointer
     shadow-sm
     bg-font

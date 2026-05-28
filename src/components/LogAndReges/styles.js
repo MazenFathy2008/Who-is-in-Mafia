@@ -23,7 +23,7 @@ const labelStyles = `
           peer-not-placeholder-shown:sm:scale-150
 
   `;
-  const inputStyles = `
+const inputStyles = `
         border-3
         border-Im1
         focus:border-Im2
@@ -36,14 +36,16 @@ const labelStyles = `
         rounded-2xl
         peer
   `;
-  const containerStyles = `
+const containerStyles = `
       flex
       flex-col
       gap-2
       w-full
       relative
+      
+
   `;
-  const buttonStyles =`
+const buttonStyles = `
   z-10 cursor-pointer
   hover:scale-125
   transtion
@@ -51,5 +53,5 @@ const labelStyles = `
   border-b-xl
   border-b-font
   underline
-  `
-export {inputStyles,labelStyles,containerStyles,buttonStyles}
+  `;
+export { inputStyles, labelStyles, containerStyles, buttonStyles };

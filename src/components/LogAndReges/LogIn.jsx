@@ -46,6 +46,7 @@ export default function LogIn({ setErrors, flipped, time, setFlipped }) {
       items-center
       gap-20
       sm:gap-15
+      justify-between
       "
     >
       <h2 className="text-2xl">Please Log In</h2>

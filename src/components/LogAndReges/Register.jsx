@@ -49,6 +49,7 @@ export default function Register({ setErrors, flipped, time, setFlipped }) {
       items-center
     gap-14
     sm:gap-10
+    justify-between
     "
     >
       <h2 className="text-2xl text-center">Please Register</h2>
