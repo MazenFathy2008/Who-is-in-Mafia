@@ -2,9 +2,9 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import LogIn from "./LogIn";
 import Register from "./Register";
-import { span } from "motion/react-client";
 export default function Main({setErrors}) {
   const [flipped, setFlipped] = useState(false);
+  const [loading,setLoading] = useState(true)
   const time = 1;
   return (
     <div

@@ -1,7 +1,14 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 
-export default async function useHandleLogin(email, password, throwError,navigate) {
+export default async function useHandleLogin(
+  email,
+  password,
+  throwError,
+  navigate,
+  setLoading,
+) {
+  setLoading(true);
   try {
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/homepage");
@@ -12,4 +19,5 @@ export default async function useHandleLogin(email, password, throwError,navigat
       console.log(err);
     }
   }
+  setLoading(false)
 }

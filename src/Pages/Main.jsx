@@ -15,7 +15,7 @@ export default function Main() {
   }, []);
   return (
     <main className="h-full w-full p-5">
-      <Loader/>
+
       <Header />
       <button
         onClick={() => {

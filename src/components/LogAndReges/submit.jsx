@@ -5,9 +5,12 @@ import {
   checkUserName,
 } from "../../auth/dataValidation";
 import handleRegs from "../../auth/handleRegs";
-import useHandleLogin from "../../auth/handleogin";
+import handleLogin from "../../auth/handleogin";
+import { useContext } from "react";
+import { GlobalLoaderProvider } from "../../App";
 export default function Submit({ setErrors, page, data }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const setLoading = useContext(GlobalLoaderProvider);
   const throwError = (msg) => {
     const id = Date.now();
     setErrors((prev) => {
@@ -35,10 +38,12 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        handleRegs(email, password,userName, throwError,navigate);
+        setLoading(true);
+
+        handleRegs(email, password, userName, throwError, navigate,setLoading);
       }
     } else if (page == "Log In") {
-      useHandleLogin(email, password, throwError,navigate);
+      handleLogin(email, password, throwError, navigate,setLoading);
     }
   };
   return (

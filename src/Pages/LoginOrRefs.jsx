@@ -3,26 +3,30 @@ import Main from "../components/LogAndReges/Main";
 import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
+import Loader from "../components/global/loader";
 export default function LogInOrRegs() {
   useEffect(() => {
     signOut(auth);
   }, []);
   const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
   return (
-    <motion.div
-      initial={{
-        y: 150,
-        opacity: 0,
-      }}
-      animate={{
-        y: 0,
-        opacity: 1,
-      }}
-      transition={{
-        duration: 2,
-        ease: "easeInOut",
-      }}
-      className="
+    <>
+      {loading ? <Loader /> : ""}
+      <motion.div
+        initial={{
+          y: 150,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 2,
+          ease: "easeInOut",
+        }}
+        className="
       h-full
       w-full
       flex 
@@ -31,9 +35,9 @@ export default function LogInOrRegs() {
       overflow-hidden
       perspective-[1000px]
       "
-    >
-      <ul
-        className="
+      >
+        <ul
+          className="
       absolute  
       h-[13%] 
       top-1 
@@ -51,25 +55,25 @@ export default function LogInOrRegs() {
       overflow-y-auto
       overflow-x-hidden
       "
-      >
-        <AnimatePresence>
-          {errors.map((err) => {
-            return (
-              <motion.li
-                key={err.id}
-                initial={{
-                  x: 1000,
-                }}
-                animate={{
-                  x: 0,
-                }}
-                exit={{
-                  x: 1000,
-                }}
-                transition={{
-                  duration: 0.5,
-                }}
-                className="
+        >
+          <AnimatePresence>
+            {errors.map((err) => {
+              return (
+                <motion.li
+                  key={err.id}
+                  initial={{
+                    x: 1000,
+                  }}
+                  animate={{
+                    x: 0,
+                  }}
+                  exit={{
+                    x: 1000,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                  }}
+                  className="
                 border-4 
                 border-Im1 
                 h-15 
@@ -79,14 +83,15 @@ export default function LogInOrRegs() {
                 bg-Im2
                 text-subBg
                 "
-              >
-                Error !<p>"{err.msg}"</p>
-              </motion.li>
-            );
-          })}
-        </AnimatePresence>
-      </ul>
-      <Main setErrors={setErrors} />
-    </motion.div>
+                >
+                  Error !<p>"{err.msg}"</p>
+                </motion.li>
+              );
+            })}
+          </AnimatePresence>
+        </ul>
+        <Main setErrors={setErrors} setLoading={setLoading}/>
+      </motion.div>
+    </>
   );
 }

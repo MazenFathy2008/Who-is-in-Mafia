@@ -1,21 +1,24 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion} from "motion/react";
 export default function Loader() {
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          duration: 1,
-        }}
-        className="
-      z-100
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      exit={{
+        opacity: 0,
+        y: 20,
+      }}
+      transition={{
+        duration: 1,
+      }}
+      className="
+      z-100 
       fixed
       top-0
       bottom-0
@@ -24,13 +27,13 @@ export default function Loader() {
       flex
       items-center
       justify-center
-      bg-Im1/50
+      bg-Im1/70
       backdrop-blur-xl
+      text-font
       "
-      >
-        <div className="border-l-Im1 animate-spin [animation-duration:2s] absolute w-40 h-40 rounded-[50%] border-8"></div>
-        loading . . . .
-      </motion.div>
-    </AnimatePresence>
+    >
+      <div className="border-l-Im1 animate-spin [animation-duration:2s] absolute w-40 h-40 rounded-[50%] border-8 bg-transparent"></div>
+      loading . . . .
+    </motion.div>
   );
 }
