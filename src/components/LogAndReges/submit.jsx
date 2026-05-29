@@ -6,7 +6,8 @@ import {
 } from "../../auth/dataValidation";
 import handleRegs from "../../auth/handleRegs";
 import handleLogin from "../../auth/handleogin";
-import useStopLoader from "../../hooks/useStopLoader"
+import useStopLoader from "../../hooks/useStopLoader";
+import useStartLoader from "../../hooks/useStartLoader";
 export default function Submit({ setErrors, page, data }) {
   const navigate = useNavigate();
   const throwError = (msg) => {
@@ -36,10 +37,33 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        handleRegs(email, password, userName, throwError, navigate,()=>{useStopLoader});
+        handleRegs(
+          email,
+          password,
+          userName,
+          throwError,
+          navigate,
+          () => {
+            useStopLoader;
+          },
+          () => {
+            useStartLoader;
+          },
+        );
       }
     } else if (page == "Log In") {
-      handleLogin(email, password, throwError, navigate,()=>{useStopLoader});
+      handleLogin(
+        email,
+        password,
+        throwError,
+        navigate,
+        () => {
+          useStopLoader;
+        },
+        () => {
+          useStartLoader;
+        },
+      );
     }
   };
   return (

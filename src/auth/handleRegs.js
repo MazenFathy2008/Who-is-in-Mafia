@@ -2,8 +2,8 @@ import {createUserWithEmailAndPassword} from "firebase/auth"
 import {db} from "../config/firebase"
 import {ref,set} from "firebase/database"
 import {auth} from "../config/firebase";
-export default async function handleRegs(email,password,userName,throwError,navigate,stopLoader) {
-  setLoading(true)
+export default async function handleRegs(email,password,userName,throwError,navigate,stopLoader,startLoader) {
+  startLoader()
   try {
     const respond = await createUserWithEmailAndPassword(auth, email, password);
     navigate('/homepage')

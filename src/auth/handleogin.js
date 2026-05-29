@@ -7,8 +7,9 @@ export default async function useHandleLogin(
   throwError,
   navigate,
   stopLoader,
+  startLoader,
 ) {
-  setLoading(true);
+  startLoader();
   try {
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/homepage");
