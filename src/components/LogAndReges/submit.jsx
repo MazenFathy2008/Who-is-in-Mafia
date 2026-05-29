@@ -6,11 +6,9 @@ import {
 } from "../../auth/dataValidation";
 import handleRegs from "../../auth/handleRegs";
 import handleLogin from "../../auth/handleogin";
-import { useContext } from "react";
-import { GlobalLoaderProvider } from "../../App";
+import useStopLoader from "../../hooks/useStopLoader"
 export default function Submit({ setErrors, page, data }) {
   const navigate = useNavigate();
-  const setLoading = useContext(GlobalLoaderProvider);
   const throwError = (msg) => {
     const id = Date.now();
     setErrors((prev) => {
@@ -38,10 +36,10 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        handleRegs(email, password, userName, throwError, navigate,setLoading);
+        handleRegs(email, password, userName, throwError, navigate,()=>{useStopLoader});
       }
     } else if (page == "Log In") {
-      handleLogin(email, password, throwError, navigate,setLoading);
+      handleLogin(email, password, throwError, navigate,()=>{useStopLoader});
     }
   };
   return (

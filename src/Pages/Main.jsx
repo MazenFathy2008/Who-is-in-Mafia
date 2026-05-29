@@ -3,6 +3,7 @@ import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import getData from "../db/get";
 import Header from "../components/main/Header";
+import useStopLoader from "../hooks/useStopLoader"
 export default function Main() {
   const [userData, setUserData] = useState(null);
   useEffect(() => {

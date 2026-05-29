@@ -6,7 +6,7 @@ export default async function useHandleLogin(
   password,
   throwError,
   navigate,
-  setLoading,
+  stopLoader,
 ) {
   setLoading(true);
   try {
@@ -18,6 +18,6 @@ export default async function useHandleLogin(
     } else {
       console.log(err);
     }
+    stopLoader();
   }
-  setLoading(false)
 }
