@@ -25,7 +25,7 @@ export default function App() {
     return ()=>unsub()
   }, [logged]);
   return (
-    <GlobalLoaderProvider.Provider value={setLoading}>
+    <GlobalLoaderProvider.Provider value={[loading,setLoading]}>
       <div
         className="
         overflow-hidden
