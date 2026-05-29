@@ -38,8 +38,6 @@ export default function Submit({ setErrors, page, data }) {
       if (!checkUserName(userName)) {
         throwError("This is an invalid username");
       } else {
-        setLoading(true);
-
         handleRegs(email, password, userName, throwError, navigate,setLoading);
       }
     } else if (page == "Log In") {

@@ -3,16 +3,13 @@ import Main from "../components/LogAndReges/Main";
 import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import Loader from "../components/global/loader";
 export default function LogInOrRegs() {
   useEffect(() => {
     signOut(auth);
   }, []);
   const [errors, setErrors] = useState([]);
-  const [loading, setLoading] = useState(false);
   return (
     <>
-      {loading ? <Loader /> : ""}
       <motion.div
         initial={{
           y: 150,
@@ -90,7 +87,7 @@ export default function LogInOrRegs() {
             })}
           </AnimatePresence>
         </ul>
-        <Main setErrors={setErrors} setLoading={setLoading}/>
+        <Main setErrors={setErrors}/>
       </motion.div>
     </>
   );

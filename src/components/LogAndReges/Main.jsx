@@ -4,7 +4,6 @@ import LogIn from "./LogIn";
 import Register from "./Register";
 export default function Main({setErrors}) {
   const [flipped, setFlipped] = useState(false);
-  const [loading,setLoading] = useState(true)
   const time = 1;
   return (
     <div
