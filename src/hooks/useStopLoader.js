@@ -1,10 +1,6 @@
 import { GlobalLoaderProvider } from "../App";
-import { useContext, useEffect } from "react";
+import { useContext} from "react";
 export default function useStopLoader() {
-  const [loading, setLoading] = useContext(GlobalLoaderProvider);
-  useEffect(() => {
-    if (loading != false) {
-      setLoading(false);
-    }
-  }, []);
+  const setLoading = useContext(GlobalLoaderProvider);
+  return()=>{setLoading(false)}
 }

@@ -5,8 +5,9 @@ import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import useStopLoader from "../hooks/useStopLoader"
 export default function LogInOrRegs() {
-  useStopLoader()
+  const stopLoader = useStopLoader()
   useEffect(() => {
+    stopLoader
     signOut(auth);
   }, []);
   const [errors, setErrors] = useState([]);

@@ -1,11 +1,6 @@
 import { GlobalLoaderProvider } from "../App";
-import { useContext, useEffect } from "react";
+import { useContext} from "react";
 export default function useStartLoader() {
-  console.log("Loader start");
-  const [loading, setLoading] = useContext(GlobalLoaderProvider);
-  useEffect(() => {
-    if (loading != true) {
-      setLoading(true);
-    }
-  }, []);
+  const setLoading = useContext(GlobalLoaderProvider);
+  return ()=>{setLoading(true)}
 }

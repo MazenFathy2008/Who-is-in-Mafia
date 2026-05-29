@@ -9,7 +9,7 @@ export default async function useHandleLogin(
   stopLoader,
   startLoader,
 ) {
-  startLoader();
+    startLoader();
   try {
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/homepage");

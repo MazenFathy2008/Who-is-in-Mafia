@@ -3,8 +3,8 @@ import {db} from "../config/firebase"
 import {ref,set} from "firebase/database"
 import {auth} from "../config/firebase";
 export default async function handleRegs(email,password,userName,throwError,navigate,stopLoader,startLoader) {
-  startLoader()
   try {
+    startLoader();
     const respond = await createUserWithEmailAndPassword(auth, email, password);
     navigate('/homepage')
     const user = respond.user

@@ -10,6 +10,8 @@ import useStopLoader from "../../hooks/useStopLoader";
 import useStartLoader from "../../hooks/useStartLoader";
 export default function Submit({ setErrors, page, data }) {
   const navigate = useNavigate();
+  const stopLoader = useStopLoader();
+  const startLoader = useStartLoader();
   const throwError = (msg) => {
     const id = Date.now();
     setErrors((prev) => {
@@ -43,12 +45,8 @@ export default function Submit({ setErrors, page, data }) {
           userName,
           throwError,
           navigate,
-          () => {
-            useStopLoader;
-          },
-          () => {
-            useStartLoader;
-          },
+          stopLoader,
+          startLoader,
         );
       }
     } else if (page == "Log In") {
@@ -57,12 +55,8 @@ export default function Submit({ setErrors, page, data }) {
         password,
         throwError,
         navigate,
-        () => {
-          useStopLoader;
-        },
-        () => {
-          useStartLoader;
-        },
+        stopLoader,
+        startLoader,
       );
     }
   };
