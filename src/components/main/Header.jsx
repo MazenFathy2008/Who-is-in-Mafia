@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { headerLi } from "./styles";
 import { motion } from "motion/react";
-export default function Header() {
+export default function Header({selected,setSelected}) {
   const items = [,"Play","Friends","Profile"];
-  const [selected, setSelected] = useState("Play");
   return (
     <header
       className="
