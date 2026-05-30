@@ -6,6 +6,7 @@ import { auth } from "./config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { AnimatePresence } from "motion/react";
+import User from "./components/main/User"
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
@@ -56,17 +57,19 @@ export default function App() {
               }
             />
             <Route
-              path="/homepage"
+              path={`/homepage`}
               element={
                 logged == true ? (
                   <Main />
                 ) : logged == false ? (
                   <Navigate to="/logIn" />
                 ) : (
-                  ""
+                  null
                 )
               }
-            />
+            >
+              <Route path=":userId" element={<User/>}/>
+            </Route>
             <Route path="/logIn" element={<LogInAndReges />} />
           </Routes>
         </BrowserRouter>
