@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import getData from "../db/get";
 import Header from "../components/main/Header";
 import useStopLoader from "../hooks/useStopLoader";
-import { useNavigate, useParams, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 export default function Main() {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(true);
   const [selected, setSelected] = useState("Profile");
   const stopLoader = useStopLoader();
   const navigate = useNavigate();
-  const id = useParams().userId;
+  const id = auth.currentUser.uid
   useEffect(() => {
     if(userData){
       navigate(`/homepage/${userData.id}/${selected}`);
@@ -20,7 +20,7 @@ export default function Main() {
     stopLoader;
     getData(id).then((resolve) => {
       setUserData(resolve);
-      navigate(`/homepage/${resolve.id}/${selected}`);
+      navigate(`/homepage/${id}/${selected}`);
     });
   }, []);
   return (
