@@ -1,9 +1,7 @@
-import {Outlet} from "react-router-dom"
+import {Outlet,useOutletContext} from "react-router-dom"
 export default function User (){
+  const userData = useOutletContext()
   return(
-    <>
-    I am User
-    <Outlet/>
-    </>
+      <Outlet context={userData}/>
   )
 }

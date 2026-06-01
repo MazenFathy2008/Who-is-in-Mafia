@@ -1,12 +1,11 @@
 import { auth } from "../config/firebase";
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import getData from "../db/get";
 import Header from "../components/main/Header";
 import useStopLoader from "../hooks/useStopLoader";
 import { useNavigate, Outlet } from "react-router-dom";
 export default function Main() {
-  const [userData, setUserData] = useState(true);
+  const [userData, setUserData] = useState(null);
   const [selected, setSelected] = useState("Profile");
   const stopLoader = useStopLoader();
   const navigate = useNavigate();
@@ -24,16 +23,9 @@ export default function Main() {
     });
   }, []);
   return (
-    <main className="h-full w-full p-5">
+    <main className="h-full w-full p-5 overflow-auto flex flex-col">
       <Header selected={selected} setSelected={setSelected} />
-      <Outlet />
-      <button
-        onClick={() => {
-          signOut(auth);
-        }}
-      >
-        log out
-      </button>
+      <Outlet context={userData}/>
     </main>
   );
 }
