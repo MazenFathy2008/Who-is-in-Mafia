@@ -1,7 +1,12 @@
+import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
-import {buttonStyles} from "./styles"
+import { buttonStyles } from "./styles";
 export default function Friends() {
-  const [isAddFriend,setIsAddFriend] = useState(false)
+  const userFriends = useOutletContext()?.friends;
+  const [isAddFriend, setIsAddFriend] = useState(false);
+  const showFriends = userFriends && userFriends.map((friend) => {
+    return <li key={friend.id}>{friend.name}</li>;
+  });
   return (
     <section
       className="
@@ -13,12 +18,43 @@ export default function Friends() {
     px-5 
     "
     >
-      <div className="flex-1 flex justify-around items-center gap-20">
-        <button onClick={()=>{setIsAddFriend(true)} } className={buttonStyles+`px-0.5 h-1/2 w-full`}>Add Friends</button>
-        <button className={buttonStyles+`px-0.5 h-1/2 w-full`}>Requests</button>
+      <div className="flex-1 flex items-center gap-20">
+        <button
+          onClick={() => {
+            setIsAddFriend(true);
+          }}
+          className={buttonStyles + `px-0.5 h-1/2 w-full`}
+        >
+          Add Friends
+        </button>
+        <button className={buttonStyles + `px-0.5 h-1/2 w-full`}>
+          Requests
+        </button>
       </div>
-      <div className="flex-3">Your Friends</div>
-      {isAddFriend?<div className="fixed z-100 left-0 top-0 right-0 bottom-0">Add friend</div>:""}
+      <div
+        className="
+      flex-3
+      shadow-md
+    shadow-black
+      w-full
+      h-full
+    bg-subBg/70 backdrop-blur-lg
+    border-4
+    border-Im1
+    rounded-3xl
+    max-h-137.5
+    flex
+    flex-col
+    justify-between
+    items-center
+    p-5
+    overflow-hidden
+    relative
+      "
+      >
+        <h1 className="text-3xl">Your Friends</h1>
+        <ul className="min-h-full w-full overflow-y-auto">{showFriends}</ul>
+      </div>
     </section>
   );
 }
