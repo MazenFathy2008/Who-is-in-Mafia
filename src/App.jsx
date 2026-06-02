@@ -8,6 +8,7 @@ import { createContext, useEffect, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import User from "./components/main/User"
 import Profile from "./components/main/Profile"
+import Friends from "./components/main/Friends"
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
@@ -72,7 +73,7 @@ export default function App() {
               <Route path=":userId" element={<User/>}>
                 <Route path = "profile" element={<Profile/>}/>
                 <Route path = "play" element={<p>Play</p>}/>
-                <Route path = "Friends" element={<p>Friends</p>}/>
+                <Route path = "Friends" element={<Friends/>}/>
               </Route>
             </Route>
             <Route path="/logIn" element={<LogInAndReges />} />

@@ -18,3 +18,6 @@ input {
   --color-Im2: #c23b3b;
   --font-Jungle: Jungle-Adventurer, sans-serif;
 }
+button{
+  cursor: pointer;
+}
