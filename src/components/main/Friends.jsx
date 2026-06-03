@@ -3,14 +3,13 @@ import { useState } from "react";
 import { buttonStyles } from "./styles";
 import AddFriend from "./FriendsSection/AddFriend";
 export default function Friends() {
-  const userFriends = useOutletContext()?.friends;
+  const userFriends = useOutletContext() || {};
   const [isAddFriend, setIsAddFriend] = useState(false);
   const [isShowRequests, setIsShowRequests] = useState(false);
-  const showFriends =
-    userFriends &&
-    userFriends.map((friend) => {
-      return <li key={friend.id}>{friend.name}</li>;
-    });
+
+  const showFriends = Object.keys(userFriends).map((key) => {
+    return <li key={userFriends[key].id}>{userFriends[key].name}</li>;
+  });
   return (
     <section
       className="

@@ -4,6 +4,7 @@ export default async function getData(id,page){
   const refrence = ref(db, `users/${id}/${page}`);
   const snapshot = await get(refrence);
   const userData = snapshot.val();
-  console.log(snapshot.exists())
-  return {...userData,id:id}
+  console.log(snapshot.val())
+  const useId = page =="Profile"?{id:id}:{};
+  return {...userData, ...useId}
 }
