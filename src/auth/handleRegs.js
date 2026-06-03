@@ -8,7 +8,7 @@ export default async function handleRegs(email,password,userName,throwError,navi
     const respond = await createUserWithEmailAndPassword(auth, email, password);
     navigate('/homepage')
     const user = respond.user
-    const refrence = ref(db,`users/${user.uid}`)
+    const refrence = ref(db,`users/${user.uid}/Profile`)
     set(refrence,{
       email:user.email,
       username:userName,

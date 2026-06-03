@@ -1,12 +1,16 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import { buttonStyles } from "./styles";
+import AddFriend from "./FriendsSection/AddFriend";
 export default function Friends() {
   const userFriends = useOutletContext()?.friends;
   const [isAddFriend, setIsAddFriend] = useState(false);
-  const showFriends = userFriends && userFriends.map((friend) => {
-    return <li key={friend.id}>{friend.name}</li>;
-  });
+  const [isShowRequests, setIsShowRequests] = useState(false);
+  const showFriends =
+    userFriends &&
+    userFriends.map((friend) => {
+      return <li key={friend.id}>{friend.name}</li>;
+    });
   return (
     <section
       className="
@@ -54,6 +58,7 @@ export default function Friends() {
       >
         <h1 className="text-3xl">Your Friends</h1>
         <ul className="min-h-full w-full overflow-y-auto">{showFriends}</ul>
+        {isAddFriend && !isShowRequests ? <AddFriend /> : null}
       </div>
     </section>
   );
