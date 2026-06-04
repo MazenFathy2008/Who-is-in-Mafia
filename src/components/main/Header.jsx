@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { headerLi } from "./styles";
+import UnderLineDiv from "../global/UderLineDiv";
 import { motion } from "motion/react";
-export default function Header({selected,setSelected}) {
-  const items = [,"Play","Friends","Profile"];
+export default function Header({ selected, setSelected }) {
+  const items = ["Play", "Friends", "Profile"];
   return (
     <header
       className="
@@ -54,17 +54,16 @@ export default function Header({selected,setSelected}) {
         {items.map((item) => (
           <li key={item} onClick={() => setSelected(item)} className={headerLi}>
             {item}
-
             {selected === item && (
-              <motion.div
-                layoutId="underline"
-                className="
+              <UnderLineDiv
+                Id={"UnderLine"}
+                className={`
                 absolute 
                 bottom-0 
-                h-2 w-1/3 
+                h-2 w-1/${items.length}
                 bg-Im2
                 shadow-2xs
-                "
+                `}
               />
             )}
           </li>

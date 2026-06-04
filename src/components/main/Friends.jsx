@@ -2,6 +2,7 @@ import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import { buttonStyles } from "./styles";
 import AddFriend from "./FriendsSection/AddFriend";
+import FriendsList from "./FriendsSection/FriendsList"
 export default function Friends() {
   const userFriends = useOutletContext() || {};
   const [isAddFriend, setIsAddFriend] = useState(false);
@@ -52,12 +53,16 @@ export default function Friends() {
     items-center
     p-5
     overflow-hidden
-    relative
+    
       "
       >
-        <h1 className="text-3xl">Your Friends</h1>
-        <ul className="min-h-full w-full overflow-y-auto">{showFriends}</ul>
-        {isAddFriend && !isShowRequests ? <AddFriend /> : null}
+        {isAddFriend && !isShowRequests ? (
+          <AddFriend />
+        ) : isShowRequests && !isAddFriend ? (
+          "current requests"
+        ) : (
+          <FriendsList showFriends={showFriends}/>
+        )}
       </div>
     </section>
   );
