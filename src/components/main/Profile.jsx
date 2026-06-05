@@ -52,7 +52,7 @@ export default function Profile() {
           Email: <span>{userData?.email}</span>
         </div>
         <div className={divStyles}>
-          Id: <span>{userData?.id}</span>
+          Id: <span>{auth.currentUser.uid}</span>
         </div>
         <button className={buttonStyles}
         onClick={()=>{signOut(auth)}}

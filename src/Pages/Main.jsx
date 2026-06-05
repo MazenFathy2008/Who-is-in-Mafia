@@ -26,7 +26,7 @@ export default function Main() {
     <main className="h-full w-full p-5 overflow-auto flex flex-col">
       <Header selected={selected} setSelected={setSelected} />
       <Outlet
-        context={selected == "Profile" ? { ...userData, id: id } : userData}
+        context={userData}
       />
     </main>
   );

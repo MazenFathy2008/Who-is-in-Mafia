@@ -18,7 +18,7 @@ export default function AddFreind() {
                 {searchType == currentSelected ? (
                   <UderLineDiv
                     Id={"UderLineAdd"}
-                    className={"absolute bg-Im2 h-2 bottom-0  "+`w-1/${searchWith.length}`}
+                    className={`absolute bg-Im2 h-2 bottom-0 w-1/${searchWith.length}`}
                   />
                 ) : null}
               </li>
