@@ -1,10 +1,11 @@
-import {ref,get} from "firebase/database"
-import {db} from "../config/firebase"
-export default async function getData(id,page){  
+import { ref, get } from "firebase/database";
+import { db } from "../config/firebase";
+import User from "../components/main/User";
+export default async function getData(id, page) {
   const refrence = ref(db, `users/${id}/${page}`);
   const snapshot = await get(refrence);
   const userData = snapshot.val();
-  console.log(snapshot.val())
-  const useId = page =="Profile"?{id:id}:{};
-  return {...userData, ...useId}
+  const dataType = typeof userData;
+  console.log(dataType);
+  return userData;
 }
