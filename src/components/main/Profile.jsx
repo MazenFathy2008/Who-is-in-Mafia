@@ -1,11 +1,11 @@
-import {motion} from "motion/react"
-import{useOutletContext} from "react-router-dom"
+import { motion } from "motion/react";
+import { useOutletContext ,useParams} from "react-router-dom";
 import { signOut } from "firebase/auth";
-import {auth} from "../../config/firebase"
-import {divStyles,buttonStyles} from "./styles"
+import { auth } from "../../config/firebase";
+import { divStyles, buttonStyles } from "./styles";
 export default function Profile() {
   const userData = useOutletContext();
-  
+  const id = useParams().userId;
   return (
     <section
       className=" 
@@ -19,15 +19,15 @@ export default function Profile() {
     items-start"
     >
       <motion.section
-      animate={{
-        y:10
-      }}
-      transition={{
-        duration:1,
-        repeat:Infinity,
-        repeatType:"reverse",
-        ease:"linear"
-      }}
+        animate={{
+          y: 10,
+        }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "linear",
+        }}
         className="
         shadow-md
         shadow-black
@@ -52,11 +52,16 @@ export default function Profile() {
           Email: <span>{userData?.email}</span>
         </div>
         <div className={divStyles}>
-          Id: <span>{auth.currentUser.uid}</span>
+          Id: <span>{id}</span>
         </div>
-        <button className={buttonStyles}
-        onClick={()=>{signOut(auth)}}
-        >Log out</button>
+        <button
+          className={buttonStyles}
+          onClick={() => {
+            signOut(auth);
+          }}
+        >
+          Log out
+        </button>
       </motion.section>
     </section>
   );

@@ -13,8 +13,6 @@ export default function Main() {
   const navigate = useNavigate();
   const id = auth.currentUser.uid;
   useEffect(() => {
-    if (!userData) {
-    }
     getData(id, selected).then((resolve) => {
       startLoader();
       navigate(`/homepage/${id}/${selected}`);

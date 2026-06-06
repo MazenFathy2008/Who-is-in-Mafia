@@ -6,6 +6,5 @@ export default async function getData(id, page) {
   const snapshot = await get(refrence);
   const userData = snapshot.val();
   const dataType = typeof userData;
-  console.log(dataType);
   return userData;
 }
