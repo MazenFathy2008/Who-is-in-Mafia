@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import LogIn from "./LogIn";
 import Register from "./Register";
-export default function Main({setErrors}) {
+export default function Main({ setErrors }) {
   const [flipped, setFlipped] = useState(false);
   const time = 1;
   return (
@@ -19,33 +19,33 @@ export default function Main({setErrors}) {
     "
     >
       <motion.h1
-        initial={{
-          zIndex: 0,
-        }}
-        whileHover={{
-          scale: 1.05,
-          y: -30,
-        }}
-        transition={{
-          duration: 0.5,
-        }}
         className="
       text-Im2 
       text-5xl 
-      relative
-      sm:top-7
       whitespace-nowrap cursor-pointer
       select-none
       flex
+      items-end
+      justify-center
       "
       >
         Who Is In
-        <img
+        <motion.img
+          initial={{
+            zIndex: 0,
+          }}
+          whileHover={{
+            y: -30,
+            animation:false,
+          }}
+          transition={{
+            duration: 0.5,
+          }}
           src="/Icons/M-icon.png"
           className="
-        w-10
-        ml-2
-        animate-bounce
+          relative
+        w-25
+        -bottom-10
         "
         />
         afia
@@ -70,8 +70,18 @@ export default function Main({setErrors}) {
               transform-3d
     "
       >
-        <LogIn setErrors={setErrors}flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
-        <Register setErrors={setErrors}flipped={flipped} time={time + 0.1} setFlipped={setFlipped} />
+        <LogIn
+          setErrors={setErrors}
+          flipped={flipped}
+          time={time + 0.1}
+          setFlipped={setFlipped}
+        />
+        <Register
+          setErrors={setErrors}
+          flipped={flipped}
+          time={time + 0.1}
+          setFlipped={setFlipped}
+        />
       </motion.form>
     </div>
   );
