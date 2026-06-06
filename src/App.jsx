@@ -9,6 +9,8 @@ import { AnimatePresence } from "motion/react";
 import User from "./components/main/User"
 import Profile from "./components/main/Profile"
 import Friends from "./components/main/Friends"
+import Addfreinds from "./components/main/FriendsSection/AddFriend"
+import FriendsList from "./components/main/FriendsSection/FriendsList"
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
@@ -73,7 +75,11 @@ export default function App() {
               <Route path=":userId" element={<User/>}>
                 <Route path = "profile" element={<Profile/>}/>
                 <Route path = "play" element={<p>Play</p>}/>
-                <Route path = "Friends" element={<Friends/>}/>
+                <Route path = "Friends" element={<Friends/>}>
+                  <Route path="friends-list"element={<FriendsList/>}></Route>
+                  <Route path="add-friend" element={<Addfreinds/>}/>
+                  <Route path="requests" element={<p>asd</p>}/>
+                </Route>
               </Route>
             </Route>
             <Route path="/logIn" element={<LogInAndReges />} />

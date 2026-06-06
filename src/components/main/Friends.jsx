@@ -1,16 +1,17 @@
-import { useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { buttonStyles } from "./styles";
-import AddFriend from "./FriendsSection/AddFriend";
-import FriendsList from "./FriendsSection/FriendsList"
+import { useEffect, useState } from "react";
 export default function Friends() {
   const userFriends = useOutletContext() || [];
-  const [isAddFriend, setIsAddFriend] = useState(false);
-  const [isShowRequests, setIsShowRequests] = useState(false);
-
-  const showFriends = userFriends.map((friend) => {
-    return <li key={friend.id}>{friend.name}</li>;
-  });
+  const sections = ["friends-list", "add-friend", "requests"];
+  const [section, setSection] = useState(sections[0]);
+  const navigate = useNavigate();
+  const back = ()=>{
+    setSection(sections[0])
+  }
+  useEffect(() => {
+    navigate(section);
+  }, [section]);
   return (
     <section
       className="
@@ -24,14 +25,19 @@ export default function Friends() {
     >
       <div className="flex-1 flex items-center gap-20">
         <button
-          onClick={() => {
-            setIsAddFriend(true);
-          }}
           className={buttonStyles + `px-0.5 h-1/2 w-full`}
+          onClick={() => {
+            setSection(sections[1]);
+          }}
         >
           Add Friends
         </button>
-        <button className={buttonStyles + `px-0.5 h-1/2 w-full`}>
+        <button
+          className={buttonStyles + `px-0.5 h-1/2 w-full`}
+          onClick={() => {
+            setSection(sections[2]);
+          }}
+        >
           Requests
         </button>
       </div>
@@ -56,13 +62,7 @@ export default function Friends() {
     
       "
       >
-        {isAddFriend && !isShowRequests ? (
-          <AddFriend />
-        ) : isShowRequests && !isAddFriend ? (
-          "current requests"
-        ) : (
-          <FriendsList showFriends={showFriends}/>
-        )}
+        <Outlet context={{userFriends:userFriends,back:back}} />
       </div>
     </section>
   );
