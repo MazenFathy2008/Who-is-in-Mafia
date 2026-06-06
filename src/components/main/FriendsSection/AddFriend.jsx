@@ -1,15 +1,19 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UderLineDiv from "../../global/UderLineDiv";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, Outlet, useNavigate } from "react-router-dom";
 export default function AddFreind() {
-  const searchWith = ["Add using username", "Add using Id"];
+  const searchWith = ["username", "Id"];
   const [currentSelected, setCurrentSelected] = useState(searchWith[0]);
-  const {back} = useOutletContext()
+  const { back } = useOutletContext();
+  const navigate = useNavigate();
+  useEffect(()=>{
+    navigate(`${currentSelected}`)
+  },[currentSelected])
   return (
     <div className="w-full h-full z-100">
       <button
-      className="
+        className="
       underline
       text transition
       duration-200
@@ -18,19 +22,22 @@ export default function AddFreind() {
       text-2xl
       hover:[text-shadow:1px_1px_5px_white]
       "
-      onClick={back}
-      > 
+        onClick={back}
+      >
         back
       </button>
       <motion.ul className="flex w-full h-10 justify-around items-center relative">
         {searchWith.map((searchType, i) => {
           return (
             <>
-              <li key={i} 
-              className="flex-1 flex flex-col cursor-pointer items-center justify-center"
-              onClick={()=>{setCurrentSelected(searchType)}}
+              <li
+                key={i}
+                className="flex-1 flex flex-col cursor-pointer items-center justify-center"
+                onClick={() => {
+                  setCurrentSelected(searchType);
+                }}
               >
-                {searchType}
+                Add using {searchType}
                 {searchType == currentSelected ? (
                   <UderLineDiv
                     Id={"UderLineAdd"}
@@ -42,6 +49,7 @@ export default function AddFreind() {
           );
         })}
       </motion.ul>
+      <Outlet />
     </div>
   );
 }

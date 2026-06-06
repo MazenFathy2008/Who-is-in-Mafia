@@ -6,28 +6,29 @@ import { auth } from "./config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { AnimatePresence } from "motion/react";
-import User from "./components/main/User"
-import Profile from "./components/main/Profile"
-import Friends from "./components/main/Friends"
-import Addfreinds from "./components/main/FriendsSection/AddFriend"
-import FriendsList from "./components/main/FriendsSection/FriendsList"
+import User from "./components/main/User";
+import Profile from "./components/main/Profile";
+import Friends from "./components/main/Friends";
+import Addfreinds from "./components/main/FriendsSection/AddFriend";
+import FriendsList from "./components/main/FriendsSection/FriendsList";
+import AddMethod from "./components/main/FriendsSection/AddMethod";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
         setLogged(true);
-        setLoading(false)
+        setLoading(false);
       } else {
         setLogged(false);
-        setLoading(false)
+        setLoading(false);
       }
     });
-    return ()=>unsub()
+    return () => unsub();
   }, []);
   return (
     <GlobalLoaderProvider.Provider value={setLoading}>
@@ -67,18 +68,19 @@ export default function App() {
                   <Main />
                 ) : logged == false ? (
                   <Navigate to="/logIn" />
-                ) : (
-                  null
-                )
+                ) : null
               }
             >
-              <Route path=":userId" element={<User/>}>
-                <Route path = "profile" element={<Profile/>}/>
-                <Route path = "play" element={<p>Play</p>}/>
-                <Route path = "Friends" element={<Friends/>}>
-                  <Route path="friends-list"element={<FriendsList/>}></Route>
-                  <Route path="add-friend" element={<Addfreinds/>}/>
-                  <Route path="requests" element={<p>asd</p>}/>
+              <Route path=":userId" element={<User />}>
+                <Route path="profile" element={<Profile />} />
+                <Route path="play" element={<p>Play</p>} />
+                <Route path="Friends" element={<Friends />}>
+                  <Route path="friends-list" element={<FriendsList />} />
+
+                  <Route path="add-friend" element={<Addfreinds />}>
+                    <Route path=":addMethod" element={<AddMethod />} />
+                  </Route>
+                  <Route path="requests" element={<p>asd</p>} />
                 </Route>
               </Route>
             </Route>
