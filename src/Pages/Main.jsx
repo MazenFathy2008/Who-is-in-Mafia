@@ -7,15 +7,18 @@ import useStartLoader from "../hooks/useStartLoader";
 import { useNavigate, Outlet } from "react-router-dom";
 export default function Main() {
   const [userData, setUserData] = useState(null);
-  const [selected, setSelected] = useState("Profile");
+  const [selected, setSelected] = useState(
+    localStorage.getItem("selected") || "Profile",
+  );
   const stopLoader = useStopLoader();
   const startLoader = useStartLoader();
   const navigate = useNavigate();
   const id = auth.currentUser.uid;
   useEffect(() => {
+    localStorage.setItem("selected", selected);
     getData(id, selected).then((resolve) => {
       startLoader();
-      navigate(`/homepage/${id}/${selected}`);
+      navigate(`${id}/${selected}`);
       setUserData(resolve);
       stopLoader();
     });
@@ -23,9 +26,7 @@ export default function Main() {
   return (
     <main className="h-full w-full p-5 overflow-auto flex flex-col">
       <Header selected={selected} setSelected={setSelected} />
-      <Outlet
-        context={userData}
-      />
+      <Outlet context={userData} />
     </main>
   );
 }
