@@ -39,11 +39,8 @@ const inputStyles = `
 const containerStyles = `
       flex
       flex-col
-      gap-2
       w-full
       relative
-      
-
   `;
 const buttonStyles = `
   z-10 cursor-pointer

@@ -44,7 +44,7 @@ export default function LogIn({ setErrors, flipped, time, setFlipped }) {
       flex
       flex-col
       items-center
-      gap-20
+      gap-15
       sm:gap-15
       justify-between
       "
@@ -87,7 +87,7 @@ export default function LogIn({ setErrors, flipped, time, setFlipped }) {
       </div>
       <Submit page="Log In" data={data} setErrors={setErrors} />
       <button
-        className={buttonStyles}
+        className={ buttonStyles}
         onClick={() => {
           setData({
             emailLog: "",

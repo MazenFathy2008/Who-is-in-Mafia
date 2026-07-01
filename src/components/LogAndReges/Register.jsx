@@ -47,7 +47,7 @@ export default function Register({ setErrors, flipped, time, setFlipped }) {
       flex
       flex-col
       items-center
-    gap-14
+    gap-9
     sm:gap-10
     justify-between
     "
