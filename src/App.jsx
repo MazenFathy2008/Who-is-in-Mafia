@@ -11,7 +11,6 @@ import Profile from "./components/main/Profile";
 import Friends from "./components/main/Friends";
 import Addfreinds from "./components/main/FriendsSection/AddFriend";
 import FriendsList from "./components/main/FriendsSection/FriendsList";
-import AddMethod from "./components/main/FriendsSection/AddMethod";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);

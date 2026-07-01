@@ -10,8 +10,6 @@ export default function Main() {
   const [selected, setSelected] = useState(
     localStorage.getItem("selected") || "Profile",
   );
-  console.log("userData+");
-
   const stopLoader = useStopLoader();
   const startLoader = useStartLoader();
   const navigate = useNavigate();
