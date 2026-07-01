@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { buttonStyles } from "./styles";
 import { useEffect, useState } from "react";
 export default function Friends() {
-  const userFriends = useOutletContext() || [];
+  const userFriends = useOutletContext()||[];
   const sections = ["friends-list", "add-friend", "requests"];
   const [section, setSection] = useState(sections[0]);
   const navigate = useNavigate();

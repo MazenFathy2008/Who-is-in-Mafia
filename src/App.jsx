@@ -16,7 +16,6 @@ export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     setLoading(true);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -75,11 +74,9 @@ export default function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="play" element={<p>Play</p>} />
                 <Route path="Friends" element={<Friends />}>
+                  <Route index element={<Navigate to="friends-list" replace />} />  
                   <Route path="friends-list" element={<FriendsList />} />
-
-                  <Route path="add-friend" element={<Addfreinds />}>
-                    <Route path=":addMethod" element={<AddMethod />} />
-                  </Route>
+                  <Route path="add-friend" element={<Addfreinds />}/>
                   <Route path="requests" element={<p>asd</p>} />
                 </Route>
               </Route>

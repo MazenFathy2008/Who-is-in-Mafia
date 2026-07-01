@@ -52,7 +52,9 @@ export default function Header({ selected, setSelected }) {
     "
       >
         {items.map((item) => (
-          <li key={item} onClick={() => setSelected(item)} className={headerLi}>
+          <li key={item} onClick={() => {
+            setSelected(prev=>prev != item?item:prev)
+            }} className={headerLi}>
             {item}
             {selected === item && (
               <UnderLineDiv
