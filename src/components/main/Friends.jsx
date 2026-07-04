@@ -5,6 +5,7 @@ export default function Friends() {
   const userFriends = useOutletContext()||[];
   const sections = ["friends-list", "add-friend", "requests"];
   const [section, setSection] = useState(sections[0]);
+  console.log(userFriends)
   const navigate = useNavigate();
   const back = ()=>{
     setSection(sections[0])
