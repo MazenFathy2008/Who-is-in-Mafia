@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { AnimatePresence} from "motion/react";
+import { AnimatePresence } from "motion/react";
 import AddFriendBtn from "./AddFriendBtn.jsx";
 import RequestSent from "./requestSent.jsx";
+import ErrMsg from "./ErrorMsg.jsx";
 export default function AddFreind() {
   const { back } = useOutletContext();
   const [id, setId] = useState("");
   const [requestSent, setRequestSent] = useState(false);
+  const [errMsg, setErrMsg] = useState(false);
   const clearInput = () => {
     setId("");
   };
@@ -21,8 +23,17 @@ export default function AddFreind() {
   const requestSentOn = () => {
     setRequestSent(true);
   };
+  const sentErrMsg = (msg)=>{
+    setErrMsg(msg);
+  }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setErrMsg(false);
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [errMsg]);
   const handleChange = (event) => {
-    setId(event.target.value.replace(/\s/g, ""));
+    setId(event.target.value.replace(/[^\p{L}\p{N}]/gu, ""));
   };
   return (
     <div
@@ -35,6 +46,7 @@ export default function AddFreind() {
     >
       <AnimatePresence>
         {requestSent ? <RequestSent /> : null}
+        {errMsg ? <ErrMsg msg={errMsg} /> : null}
       </AnimatePresence>
       <button
         className="
@@ -119,6 +131,7 @@ export default function AddFreind() {
           friendId={id}
           clearInput={clearInput}
           requestSentOn={requestSentOn}
+          sentErrMsg ={sentErrMsg}
         />
       </div>
     </div>

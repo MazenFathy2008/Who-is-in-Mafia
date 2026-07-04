@@ -3,7 +3,12 @@ import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import useStartLoader from "../../../hooks/useStartLoader";
 import useStoptLoader from "../../../hooks/useStopLoader";
-export default function AddFRiendBtn({ friendId, clearInput,requestSentOn }) {
+export default function AddFRiendBtn({
+  friendId,
+  clearInput,
+  requestSentOn,
+  sentErrMsg,
+}) {
   const uid = useParams().userId;
   friendId = friendId === "" ? " " : friendId;
   const startLoader = useStartLoader();
@@ -13,7 +18,6 @@ export default function AddFRiendBtn({ friendId, clearInput,requestSentOn }) {
     try {
       const Friendreference = ref(db, `users/${friendId}/Profile`);
       const Friendshot = await get(Friendreference);
-      console.log(Friendshot.exists())
       if (Friendshot.exists()) {
         const myRequests = ref(db, `users/${uid}/sentRequests`);
         const friendrequests = ref(db, `users/${friendId}/requests`);
@@ -28,7 +32,9 @@ export default function AddFRiendBtn({ friendId, clearInput,requestSentOn }) {
             ...myData.val(),
           },
         });
-        requestSentOn()
+        requestSentOn();
+      } else {
+        sentErrMsg("This Id doesn't exsist");
       }
       clearInput();
     } catch (err) {
