@@ -3,10 +3,11 @@ import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import useStartLoader from "../../../hooks/useStartLoader";
 import useStoptLoader from "../../../hooks/useStopLoader";
+import acceptRequest from "./utils/acceptReqeust"
 export default function AddFRiendBtn({
   friendId,
   clearInput,
-  requestSentOn,
+  funcSucceedMsg,
   sentErrMsg,
 }) {
   const uid = useParams().userId;
@@ -30,6 +31,11 @@ export default function AddFRiendBtn({
       );
       const isInMySentRequest = (await get(isInMySentRequestsRef)).exists();
       const isInFriendRequests = (await get(isInFriendRequestsRef)).exists();
+      // check if your friend already sent request first
+      const isInMyRequestsRef = ref(db,`users/${uid}/requests/${friendId}`);
+      const isInFriendSentRequestsRef = ref(db,`users/${friendId}/sentRequests/${uid}`)
+      const isInMyRequests=(await get(isInMyRequestsRef)).exists();
+      const isInFriendSentRequests = (await get(isInFriendSentRequestsRef)).exists();
       if (friendId === uid) {
         sentErrMsg(
           "Do you want to sent a friend request for your self, Poor you 😢",
@@ -40,7 +46,10 @@ export default function AddFRiendBtn({
         sentErrMsg("This Id doesn't exsist");
       } else if (isInFriendRequests && isInMySentRequest) {
         sentErrMsg("This request is already sent");
-      } else {
+      } else if (isInMyRequests && isInFriendSentRequests){
+        acceptRequest(uid,friendId)
+        funcSucceedMsg("We found that your friend has already sent a friend request to you so we accept it");
+      }else {
         const myRequests = ref(db, `users/${uid}/sentRequests`);
         const friendrequests = ref(db, `users/${friendId}/requests`);
         await update(myRequests, {
@@ -54,7 +63,7 @@ export default function AddFRiendBtn({
             ...myData.val(),
           },
         });
-        requestSentOn();
+        funcSucceedMsg("request has been sent !");
       }
       clearInput();
     } catch (err) {

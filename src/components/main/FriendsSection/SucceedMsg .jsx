@@ -1,5 +1,5 @@
 import {motion} from "motion/react"
-export default function requestSent(){
+export default function SucceedMsg({msg}){
   return<motion.div 
   initial={{
     opacity:0
@@ -18,6 +18,6 @@ export default function requestSent(){
   flex items-center justify-center text-2xl bg-green-500/70
   rounded-xl backdrop-blur-3xl
   ">
-      request has been sent !
+      {msg}
     </motion.div>
 }

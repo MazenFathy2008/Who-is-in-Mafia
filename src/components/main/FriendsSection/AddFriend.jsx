@@ -2,26 +2,26 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import AddFriendBtn from "./AddFriendBtn.jsx";
-import RequestSent from "./requestSent.jsx";
+import SucceedMsg from "./SucceedMsg .jsx";
 import ErrMsg from "./ErrorMsg.jsx";
 export default function AddFreind() {
   const { back } = useOutletContext();
   const [id, setId] = useState("");
-  const [requestSent, setRequestSent] = useState(false);
+  const [succeedMsg, setSucceedMsg] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const clearInput = () => {
     setId("");
   };
   useEffect(() => {
-    if (!requestSent) return;
+    if (!succeedMsg) return;
     const timeout = setTimeout(() => {
-      setRequestSent(false);
+      setSucceedMsg(false);
     }, 3000);
 
     return () => clearTimeout(timeout);
-  }, [requestSent]);
-  const requestSentOn = () => {
-    setRequestSent(true);
+  }, [succeedMsg]);
+  const funcSucceedMsg = (msg) => {
+    setSucceedMsg(msg);
   };
   const sentErrMsg = (msg)=>{
     setErrMsg(msg);
@@ -45,7 +45,7 @@ export default function AddFreind() {
     "
     >
       <AnimatePresence>
-        {requestSent ? <RequestSent /> : null}
+        {succeedMsg ? <SucceedMsg msg={succeedMsg}/> : null}
         {errMsg ? <ErrMsg msg={errMsg} /> : null}
       </AnimatePresence>
       <button
@@ -130,7 +130,7 @@ export default function AddFreind() {
         <AddFriendBtn
           friendId={id}
           clearInput={clearInput}
-          requestSentOn={requestSentOn}
+          funcSucceedMsg={funcSucceedMsg}
           sentErrMsg ={sentErrMsg}
         />
       </div>
