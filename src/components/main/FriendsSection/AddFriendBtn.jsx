@@ -1,32 +1,40 @@
 import { ref, update, get } from "firebase/database";
 import { db } from "../../../config/firebase";
-import { data, useParams } from "react-router-dom";
-import { useState } from "react";
-export default function AddFRiendBtn({ friendId }) {
+import { useParams } from "react-router-dom";
+import useStartLoader from "../../../hooks/useStartLoader";
+import useStoptLoader from "../../../hooks/useStopLoader";
+export default function AddFRiendBtn({ friendId, clearInput,requestSentOn }) {
   const uid = useParams().userId;
-  const [firndData, setFriendData] = useState(null);
-  friendId = friendId === ""? " ":friendId
-  
+  friendId = friendId === "" ? " " : friendId;
+  const startLoader = useStartLoader();
+  const stopLoader = useStoptLoader();
   const handleClike = async () => {
-    const Friendreference = ref(db, `users/${friendId}/Profile`);
-    const Friendshot = await get(Friendreference);
-    if (Friendshot.exists()) {
-      console.log(Friendshot.val())
-      const myRequests = ref(db,`users/${uid}/sentRequests`);
-      const friendrequests = ref(db,`users/${friendId}/requests`);
-      await update(myRequests,{
-        [friendId]:{
-          ...Friendshot.val()
-        }
-      });
-      const myData = await get(ref(db,`users/${uid}/Profile`))
-      await update(friendrequests,{
-        [uid]:{
-          ...myData.val()
-        }
-      })
-      setFriendData(data);
+    startLoader();
+    try {
+      const Friendreference = ref(db, `users/${friendId}/Profile`);
+      const Friendshot = await get(Friendreference);
+      console.log(Friendshot.exists())
+      if (Friendshot.exists()) {
+        const myRequests = ref(db, `users/${uid}/sentRequests`);
+        const friendrequests = ref(db, `users/${friendId}/requests`);
+        await update(myRequests, {
+          [friendId]: {
+            ...Friendshot.val(),
+          },
+        });
+        const myData = await get(ref(db, `users/${uid}/Profile`));
+        await update(friendrequests, {
+          [uid]: {
+            ...myData.val(),
+          },
+        });
+        requestSentOn()
+      }
+      clearInput();
+    } catch (err) {
+      console.log(err);
     }
+    stopLoader();
   };
   return (
     <button

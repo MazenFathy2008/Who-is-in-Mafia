@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import AddFriendBtn from "./AddFriendBtn.jsx"
+import { AnimatePresence} from "motion/react";
+import AddFriendBtn from "./AddFriendBtn.jsx";
+import RequestSent from "./requestSent.jsx";
 export default function AddFreind() {
   const { back } = useOutletContext();
   const [id, setId] = useState("");
+  const [requestSent, setRequestSent] = useState(false);
+  const clearInput = () => {
+    setId("");
+  };
+  useEffect(() => {
+    if (!requestSent) return;
+    const timeout = setTimeout(() => {
+      setRequestSent(false);
+    }, 3000);
+
+    return () => clearTimeout(timeout);
+  }, [requestSent]);
+  const requestSentOn = () => {
+    setRequestSent(true);
+  };
   const handleChange = (event) => {
     setId(event.target.value.replace(/\s/g, ""));
   };
@@ -16,15 +33,18 @@ export default function AddFreind() {
     relative
     "
     >
+      <AnimatePresence>
+        {requestSent ? <RequestSent /> : null}
+      </AnimatePresence>
       <button
         className="
-      underline
-      text transition
-      duration-200
-      hover:scale-110
-      active:scale-95
-      text-2xl
-      hover:[text-shadow:1px_1px_5px_white]
+        underline
+        text transition
+        duration-200
+        hover:scale-110
+        active:scale-95
+        text-2xl
+        hover:[text-shadow:1px_1px_5px_white]
       "
         onClick={() => {
           back();
@@ -45,7 +65,7 @@ export default function AddFreind() {
             value={id}
             onChange={handleChange}
             className={`
-        border-3
+              border-3
         border-Im1
         focus:border-Im2
         transtion
@@ -57,16 +77,16 @@ export default function AddFreind() {
         box-border
         rounded-2xl
         peer
-  `}
+        `}
             placeholder=""
           />
 
           <label
             htmlFor="AddWithId"
             className={`
-        absolute
-          z-100
-          select-none
+              absolute
+              z-100
+              select-none
           top-1/2
           -translate-y-1/2
           left-4
@@ -95,7 +115,11 @@ export default function AddFreind() {
             Enter Your Friend Id
           </label>
         </div>
-      <AddFriendBtn friendId = {id}/>
+        <AddFriendBtn
+          friendId={id}
+          clearInput={clearInput}
+          requestSentOn={requestSentOn}
+        />
       </div>
     </div>
   );
