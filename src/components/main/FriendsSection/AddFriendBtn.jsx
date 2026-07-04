@@ -18,7 +18,29 @@ export default function AddFRiendBtn({
     try {
       const Friendreference = ref(db, `users/${friendId}/Profile`);
       const Friendshot = await get(Friendreference);
-      if (Friendshot.exists()) {
+      const isFriendRef = ref(db, `users/${uid}/Friends/${friendId}`);
+      const isFriend = (await get(isFriendRef)).exists();
+      const isInMySentRequestsRef = ref(
+        db,
+        `users/${uid}/sentRequests/${friendId}`,
+      );
+      const isInFriendRequestsRef = ref(
+        db,
+        `users/${friendId}/requests/${uid}`,
+      );
+      const isInMySentRequest = (await get(isInMySentRequestsRef)).exists();
+      const isInFriendRequests = (await get(isInFriendRequestsRef)).exists();
+      if (friendId === uid) {
+        sentErrMsg(
+          "Do you want to sent a friend request for your self, Poor you 😢",
+        );
+      } else if (isFriend) {
+        sentErrMsg("This is already a friend");
+      } else if (!Friendshot.exists()) {
+        sentErrMsg("This Id doesn't exsist");
+      } else if (isInFriendRequests && isInMySentRequest) {
+        sentErrMsg("This request is already sent");
+      } else {
         const myRequests = ref(db, `users/${uid}/sentRequests`);
         const friendrequests = ref(db, `users/${friendId}/requests`);
         await update(myRequests, {
@@ -33,14 +55,13 @@ export default function AddFRiendBtn({
           },
         });
         requestSentOn();
-      } else {
-        sentErrMsg("This Id doesn't exsist");
       }
       clearInput();
     } catch (err) {
-      console.log(err);
+      console.error(err);
+    } finally {
+      stopLoader();
     }
-    stopLoader();
   };
   return (
     <button

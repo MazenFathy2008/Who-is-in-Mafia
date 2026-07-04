@@ -2,8 +2,8 @@ import { useOutletContext } from "react-router-dom";
 
 export default function FriendsList() {
   const {userFriends} = useOutletContext()
-  const showFriends = userFriends.map((friend) => {
-    return <li key={friend.id}>{friend.name}</li>;
+  const showFriends = Object.keys(userFriends).map((friend) => {
+    return <li key={userFriends[friend].id}>{userFriends[friend].name}</li>;
   });
   return (
     <>
