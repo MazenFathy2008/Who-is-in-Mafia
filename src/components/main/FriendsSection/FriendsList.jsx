@@ -1,4 +1,4 @@
-import { useOutletContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {onChildAdded, ref} from "firebase/database"
 import { useEffect, useState } from "react";
 import {db} from "../../../config/firebase"
