@@ -35,5 +35,20 @@ duration-200
 hover:[box-shadow:0_0_10px_red]
 hover:scale-95
 active:scale-90
+flex
+items-center
+justify-center
 `
-export { headerLi,divStyles,buttonStyles };
+const disabledButtonstyles=`
+border-background
+border-4
+min-h-1/6
+bg-green-700
+text-subBg
+text-xl
+rounded-4xl
+flex
+items-center
+justify-center
+`
+export { headerLi,divStyles,buttonStyles,disabledButtonstyles };

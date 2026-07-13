@@ -1,12 +1,13 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { buttonStyles } from "../styles";
+import { buttonStyles,disabledButtonstyles } from "../styles";
 import { onValue, ref } from "firebase/database";
 import { useParams } from "react-router-dom";
 import { db } from "../../../config/firebase";
-import createNewRoom from "./utils/create"
+import createNewRoom from "./utils/create";
 export default function CreatRoom({ flipped, setFlipped }) {
   const [friends, setFriends] = useState(null);
+  const [invitedFriends, setInvitedFriends] = useState();
   const uid = useParams().userId;
   useEffect(() => {
     const refrence = ref(db, `users/${uid}/Friends`);
@@ -17,6 +18,7 @@ export default function CreatRoom({ flipped, setFlipped }) {
           ...(prev || []),
           ...Object.keys(data).map((key) => {
             return {
+              disabled: false,
               id: key,
               ...data[key],
             };
@@ -26,10 +28,27 @@ export default function CreatRoom({ flipped, setFlipped }) {
     });
     return unsub;
   }, []);
-  const handleClick =()=>{
-    console.log(uid)
-    createNewRoom(uid)
-  }
+  console.log(invitedFriends);
+  const handleClick = () => {
+    createNewRoom(uid, invitedFriends);
+  };
+  const handleInvite = (data) => {
+    setInvitedFriends((prev) => {
+      return {...(prev || {}), 
+        [data.id]:{...data , disabled:null}};
+    });
+    setFriends((prev) => {
+      return prev.map((friend) => {
+        if (friend.id == data.id) {
+          return {
+            ...friend,
+            disabled: true,
+          };
+        }
+        return friend;
+      });
+    });
+  };
   const friendsList = friends
     ? friends.map((friend) => {
         return (
@@ -40,14 +59,18 @@ export default function CreatRoom({ flipped, setFlipped }) {
         "
           >
             {friend.username}
-            <button
-              type="button"
+            <div
+              onClick={() => {
+                friend.disabled?null:
+                handleInvite(friend);
+              }}
               className={
-                buttonStyles.replace("bg-font", "bg-green-500") + "w-25/100"
+                friend.disabled?disabledButtonstyles+"w-25/100 cursor-not-allowed":(buttonStyles.replace("bg-font", "bg-green-500 cursor-pointer") + 
+                "w-25/100")
               }
             >
               Invite
-            </button>
+            </div>
           </li>
         );
       })
@@ -82,10 +105,10 @@ export default function CreatRoom({ flipped, setFlipped }) {
       <ul className="w-full h-1/2 border-4 rounded-2xl p-4 gap-3 flex flex-col">
         {friendsList}
       </ul>
-      <button 
-      type="button" 
-      className={buttonStyles + "w-full"}
-      onClick={handleClick}
+      <button
+        type="button"
+        className={buttonStyles + "w-full"}
+        onClick={handleClick}
       >
         Create now
       </button>
