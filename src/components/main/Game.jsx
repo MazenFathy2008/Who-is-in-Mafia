@@ -2,10 +2,12 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import CreatRoom from "./Game/CreateRoom";
 import JoinRoom from "./Game/JoinRoom";
+import Notifications from "./Game/Notifcations";
 export default function Game() {
   const [flipped, setFlipped] = useState(false);
   return (
-    <section className="w-full flex h-full justify-center items-center box-border overflow-hidden ">
+    <section className="w-full flex h-full justify-center items-center box-border overflow-hidden relative">
+      <Notifications />
       <div
         className="
     p-4
