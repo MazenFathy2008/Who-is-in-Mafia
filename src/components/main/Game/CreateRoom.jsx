@@ -1,7 +1,57 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { buttonStyles } from "../styles";
+import { onValue, ref } from "firebase/database";
+import { useParams } from "react-router-dom";
+import { db } from "../../../config/firebase";
+import { object } from "motion/react-client";
+import { array } from "firebase/firestore/pipelines";
 export default function CreatRoom({ flipped, setFlipped }) {
+  const [friends, setFriends] = useState(null);
+  const uid = useParams().userId;
+  useEffect(() => {
+    console.log(friends);
+  }, [friends]);
+  useEffect(() => {
+    const refrence = ref(db, `users/${uid}/Friends`);
+    const unsub = onValue(refrence, (snapshot) => {
+      const data = snapshot.val();
+      setFriends((prev) => {
+        return [
+          ...(prev || []),
+          ...Object.keys(data).map((key) => {
+            return {
+              id: key,
+              ...data[key],
+            };
+          }),
+        ];
+      });
+    });
+    return unsub;
+  }, []);
+  const friendsList = friends
+    ? friends.map((friend) => {
+        return (
+          <li
+            key={friend.id}
+            className="
+        flex w-full justify-between
+        "
+          >
+            {friend.username}
+            <button
+              type="button"
+              className={
+                buttonStyles.replace("bg-font", "bg-green-500") + "w-25/100"
+              }
+            >
+              Invite
+            </button>
+          </li>
+        );
+      })
+    : [];
   return (
     <motion.div
       initial={{
@@ -29,15 +79,8 @@ export default function CreatRoom({ flipped, setFlipped }) {
     "
     >
       <h1>Create Room</h1>
-      <ul className="w-full h-1/2 border-4 rounded-2xl p-4">
-        <li
-        className="
-        flex w-full justify-between
-        "
-        >Mazen 
-          <button type="button" className=
-          { buttonStyles.replace("bg-font", "bg-green-500") + "w-25/100"}>Invite</button>
-        </li>
+      <ul className="w-full h-1/2 border-4 rounded-2xl p-4 gap-3 flex flex-col">
+        {friendsList}
       </ul>
       <button type="button" className={buttonStyles + "w-full"}>
         Create now
