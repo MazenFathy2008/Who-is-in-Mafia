@@ -7,7 +7,6 @@ import {
 } from "./styles";
 import Submit from "./submit";
 import { useState } from "react";
-import { use } from "motion/react-m";
 export default function LogIn({ setErrors, flipped, time, setFlipped }) {
   const [showPassword, setPasswordState] = useState(false);
   const [data, setData] = useState({
