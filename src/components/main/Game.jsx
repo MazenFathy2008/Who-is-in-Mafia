@@ -37,7 +37,6 @@ export default function Game() {
               items-center 
               transform-3d
     "
-
         >
           <CreatRoom flipped={flipped} setFlipped={setFlipped} />
           <JoinRoom flipped={flipped} setFlipped={setFlipped} />
