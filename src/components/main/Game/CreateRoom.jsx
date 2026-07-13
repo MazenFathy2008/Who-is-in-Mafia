@@ -4,14 +4,10 @@ import { buttonStyles } from "../styles";
 import { onValue, ref } from "firebase/database";
 import { useParams } from "react-router-dom";
 import { db } from "../../../config/firebase";
-import { object } from "motion/react-client";
-import { array } from "firebase/firestore/pipelines";
+import createNewRoom from "./utils/create"
 export default function CreatRoom({ flipped, setFlipped }) {
   const [friends, setFriends] = useState(null);
   const uid = useParams().userId;
-  useEffect(() => {
-    console.log(friends);
-  }, [friends]);
   useEffect(() => {
     const refrence = ref(db, `users/${uid}/Friends`);
     const unsub = onValue(refrence, (snapshot) => {
@@ -30,6 +26,10 @@ export default function CreatRoom({ flipped, setFlipped }) {
     });
     return unsub;
   }, []);
+  const handleClick =()=>{
+    console.log(uid)
+    createNewRoom(uid)
+  }
   const friendsList = friends
     ? friends.map((friend) => {
         return (
@@ -82,7 +82,11 @@ export default function CreatRoom({ flipped, setFlipped }) {
       <ul className="w-full h-1/2 border-4 rounded-2xl p-4 gap-3 flex flex-col">
         {friendsList}
       </ul>
-      <button type="button" className={buttonStyles + "w-full"}>
+      <button 
+      type="button" 
+      className={buttonStyles + "w-full"}
+      onClick={handleClick}
+      >
         Create now
       </button>
       <button
