@@ -1,7 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { onValue, ref } from "firebase/database";
+import { db } from "../../../config/firebase";
+import { useParams } from "react-router-dom";
 export default function Notifications() {
+  const [notifications, setNotificstions] = useState(null);
+  const uid = useParams().userId;
+  useEffect(() => {
+    const notiRef = ref(db, `users/${uid}/Play/invetations`);
+    const unsub = onValue(notiRef, (snapshot) => {
+      setNotificstions((prev) => {
+        return prev ? { ...prev, ...snapshot.val() } : snapshot.val();
+      });
+    });
+    return unsub;
+  }, []);
   const [isShown, setIsShown] = useState(false);
+  const notiList = notifications ? (
+    Object.keys(notifications).map((noti) => {
+      const current = notifications[noti];
+      return (
+        <li
+          key={current.roomId}
+          className="w-full h-1/3 bg-font text-subBg rounded-sm p-2 flex flex-col items-center justify-between"
+        >
+          {current.senderData.username} has sent a game invetation to you
+          <div className="w-full flex justify-between">
+            <button
+              className="w-40 h-10 bg-green-500 
+              rounded-md shadow-lg 
+              hover:scale-95 active:scale-90 transition-all duration-200"
+            >
+              Accept
+            </button>
+            <button
+              className="w-40 h-10 bg-red-500 
+              rounded-md shadow-lg 
+              hover:scale-95 active:scale-90 transition-all duration-200"
+            >
+              Reject
+            </button>
+          </div>
+        </li>
+      );
+    })
+  ) : (
+    <p className="w-full h-full flex items-center justify-centerz`">You don't have any Notifications rigth now</p>
+  );
   return (
     <>
       <AnimatePresence>
@@ -16,8 +61,8 @@ export default function Notifications() {
             animate={{
               opacity: 1,
               scale: 1,
-              x:0,
-              y:0
+              x: 0,
+              y: 0,
             }}
             transition={{
               duration: 0.25,
@@ -52,7 +97,7 @@ export default function Notifications() {
         gap-5
         "
             >
-              <li className="w-full h-1/3 bg-font text-subBg rounded-sm p-2 flex flex-col items-center justify-between">
+              {/* <li className="w-full h-1/3 bg-font text-subBg rounded-sm p-2 flex flex-col items-center justify-between">
                 Mazen has sent a game invetation to you
                 <div className="w-full flex justify-between">
                   <button
@@ -70,7 +115,8 @@ export default function Notifications() {
                     Reject
                   </button>
                 </div>
-              </li>
+              </li> */}
+              {notiList}
             </ul>
             <div className="w-full h-5/100 ">
               <button

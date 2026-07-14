@@ -28,7 +28,6 @@ export default function CreatRoom({ flipped, setFlipped }) {
     });
     return unsub;
   }, []);
-  console.log(invitedFriends);
   const handleClick = () => {
     createNewRoom(uid, invitedFriends);
   };
