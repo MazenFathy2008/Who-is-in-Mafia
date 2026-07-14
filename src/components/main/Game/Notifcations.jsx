@@ -45,7 +45,9 @@ export default function Notifications() {
       );
     })
   ) : (
-    <p className="w-full h-full flex items-center justify-centerz`">You don't have any Notifications rigth now</p>
+    <div className="w-full h-full flex justify-center items-center">
+      You don't have any Notifications rigth now
+    </div>
   );
   return (
     <>
@@ -97,25 +99,6 @@ export default function Notifications() {
         gap-5
         "
             >
-              {/* <li className="w-full h-1/3 bg-font text-subBg rounded-sm p-2 flex flex-col items-center justify-between">
-                Mazen has sent a game invetation to you
-                <div className="w-full flex justify-between">
-                  <button
-                    className="w-40 h-10 bg-green-500 
-              rounded-md shadow-lg 
-              hover:scale-95 active:scale-90 transition-all duration-200"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    className="w-40 h-10 bg-red-500 
-              rounded-md shadow-lg 
-              hover:scale-95 active:scale-90 transition-all duration-200"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </li> */}
               {notiList}
             </ul>
             <div className="w-full h-5/100 ">
@@ -123,7 +106,7 @@ export default function Notifications() {
                 onClick={() => {
                   setIsShown(false);
                 }}
-                className="px-5   flex items-center text-2xl box-border hover:scale-95 transition-all duration-200 active:scale-90"
+                className="px-5  flex items-center text-2xl box-border hover:scale-95 transition-all duration-200 active:scale-90"
               >
                 Close
               </button>
@@ -145,6 +128,13 @@ export default function Notifications() {
     active:scale-90
     absolute md:top-5 md:right-5 top-2 right-2 hover:shadow-lg shadow-Im1 transition-all duration-200"
       >
+        <p
+          className="
+        text-xl  absolute -top-2 
+        right-0 bg-Im1 w-5 h-5 flex items-center justify-center rounded-[50%]   "
+        >
+          {notifications ? Object.keys(notifications).length : 0}
+        </p>
         <img
           src="\Icons\Notifications.png"
           className="w-7 md:w-10 rounded-[50%]   "
