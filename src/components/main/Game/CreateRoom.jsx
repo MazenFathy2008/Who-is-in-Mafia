@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { buttonStyles,disabledButtonstyles } from "../styles";
+import { buttonStyles, disabledButtonstyles } from "../styles";
 import { onValue, ref } from "firebase/database";
 import { useParams } from "react-router-dom";
 import { db } from "../../../config/firebase";
@@ -13,7 +13,9 @@ export default function CreatRoom({ flipped, setFlipped }) {
     const refrence = ref(db, `users/${uid}/Friends`);
     const unsub = onValue(refrence, (snapshot) => {
       const data = snapshot.val();
+
       setFriends((prev) => {
+        if (!data) return null;
         return [
           ...(prev || []),
           ...Object.keys(data).map((key) => {
@@ -33,8 +35,7 @@ export default function CreatRoom({ flipped, setFlipped }) {
   };
   const handleInvite = (data) => {
     setInvitedFriends((prev) => {
-      return {...(prev || {}), 
-        [data.id]:{...data , disabled:null}};
+      return { ...(prev || {}), [data.id]: { ...data, disabled: null } };
     });
     setFriends((prev) => {
       return prev.map((friend) => {
@@ -48,32 +49,45 @@ export default function CreatRoom({ flipped, setFlipped }) {
       });
     });
   };
-  const friendsList = friends
-    ? friends.map((friend) => {
-        return (
-          <li
-            key={friend.id}
-            className="
+  const friendsList = friends ? (
+    friends.map((friend) => {
+      return (
+        <li
+          key={friend.id}
+          className="
         flex w-full justify-between
         "
+        >
+          {friend.username}
+          <div
+            onClick={() => {
+              friend.disabled ? null : handleInvite(friend);
+            }}
+            className={
+              friend.disabled
+                ? disabledButtonstyles + "w-25/100 cursor-not-allowed"
+                : buttonStyles.replace(
+                    "bg-font",
+                    "bg-green-500 cursor-pointer",
+                  ) + "w-25/100"
+            }
           >
-            {friend.username}
-            <div
-              onClick={() => {
-                friend.disabled?null:
-                handleInvite(friend);
-              }}
-              className={
-                friend.disabled?disabledButtonstyles+"w-25/100 cursor-not-allowed":(buttonStyles.replace("bg-font", "bg-green-500 cursor-pointer") + 
-                "w-25/100")
-              }
-            >
-              Invite
-            </div>
-          </li>
-        );
-      })
-    : [];
+            Invite
+          </div>
+        </li>
+      );
+    })
+  ) : (
+    <motion.p
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ duration: 0.3 }}
+      className="w-full h-full flex items-center justify-center text-lg"
+    >
+      You don't have any Friends till now ....
+    </motion.p>
+  );
   return (
     <motion.div
       initial={{

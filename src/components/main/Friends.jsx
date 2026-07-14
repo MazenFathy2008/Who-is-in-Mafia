@@ -19,11 +19,13 @@ export default function Friends() {
     h-full
     flex
     flex-col
+    items-center
+    justify-start
     py-15 
     px-5 
     "
     >
-      <div className="flex-1 flex items-center gap-20">
+      <div className="flex-1 w-full md:w-90/100 flex items-center gap-20">
         <button
           className={buttonStyles + `px-0.5 h-1/2 w-full`}
           onClick={() => {
@@ -47,6 +49,7 @@ export default function Friends() {
       shadow-md
     shadow-black
       w-full
+      md:w-90/100
       h-full
     bg-subBg/70 backdrop-blur-lg
     border-4
@@ -58,6 +61,7 @@ export default function Friends() {
     justify-between
     items-center
     p-5
+    md:p-7
     overflow-hidden
     
       "

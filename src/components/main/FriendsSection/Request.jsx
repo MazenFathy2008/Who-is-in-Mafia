@@ -33,7 +33,7 @@ export default function Requests() {
       setRequests((prev) => {
         const updated = { ...prev };
         delete updated[snapshot.key];
-        return updated;
+        return Object.keys(updated).length > 0? updated:null;
       });
     });
     return () => {
@@ -110,7 +110,7 @@ export default function Requests() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 100 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
               className="w-full h-full flex items-center justify-center text-2xl"
             >
               You don't have any Requests Right now 
