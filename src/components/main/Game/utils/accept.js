@@ -1,0 +1,18 @@
+import { ref, set, get } from "firebase/database";
+import reject from "./reject";
+import { db } from "../../../../config/firebase";
+export default async function accept(userId, roomId) {
+  const roomref = ref(db, `rooms/${roomId}/players/${userId}`);
+  const userData = ref(db, `users/${userId}/Profile`);
+  const snapshot = await get(userData);
+  try {
+    await set(roomref, {
+      ...snapshot.val(),
+      id: userId,
+      isHost: false,
+    });
+    reject(userId, roomId);
+  } catch {
+    console.log("there is error");
+  }
+}

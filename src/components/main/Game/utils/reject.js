@@ -5,5 +5,4 @@ export default function reject(userId, roomId) {
   const roomRef = ref(db, `rooms/${roomId}/invetations/${userId}`);
   remove(userRef);
   remove(roomRef);
-  
 }

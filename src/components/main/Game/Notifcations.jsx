@@ -4,7 +4,7 @@ import { onValue, ref } from "firebase/database";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import reject from "./utils/reject"
-
+import accept from "./utils/accept"
 export default function Notifications() {
   const [notifications, setNotificstions] = useState(null);
   const uid = useParams().userId;
@@ -27,6 +27,9 @@ export default function Notifications() {
           {current.senderData.username} has sent a game invetation to you
           <div className="w-full flex justify-between">
             <button
+            onClick={()=>{
+              accept(uid,current.roomId)
+            }}
               className="w-40 h-10 bg-green-500 
               rounded-md shadow-lg 
               hover:scale-95 active:scale-90 transition-all duration-200"
