@@ -12,7 +12,9 @@ export default async function accept(userId, roomId) {
       isHost: false,
     });
     reject(userId, roomId);
+    return true
   } catch {
     console.log("there is error");
+    return false
   }
 }
