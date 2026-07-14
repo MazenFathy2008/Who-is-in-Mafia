@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
-import reject from "./utils/reject"
-import accept from "./utils/accept"
+import reject from "./utils/reject";
+import accept from "./utils/accept";
 export default function Notifications() {
   const [notifications, setNotificstions] = useState(null);
   const uid = useParams().userId;
@@ -20,16 +20,22 @@ export default function Notifications() {
     Object.keys(notifications).map((noti) => {
       const current = notifications[noti];
       return (
-        <li
+        <motion.li
+          transition={{
+            duration: 0.5,
+          }}
+          exit={{
+            x: 1000,
+          }}
           key={current.roomId}
           className="w-full h-1/3 bg-font text-subBg rounded-sm p-2 flex flex-col items-center justify-between"
         >
           {current.senderData.username} has sent a game invetation to you
           <div className="w-full flex justify-between">
             <button
-            onClick={()=>{
-              accept(uid,current.roomId)
-            }}
+              onClick={() => {
+                accept(uid, current.roomId);
+              }}
               className="w-40 h-10 bg-green-500 
               rounded-md shadow-lg 
               hover:scale-95 active:scale-90 transition-all duration-200"
@@ -37,9 +43,9 @@ export default function Notifications() {
               Accept
             </button>
             <button
-            onClick={()=>{
-              reject(uid,current.roomId)
-            }}
+              onClick={() => {
+                reject(uid, current.roomId);
+              }}
               className="w-40 h-10 bg-red-500 
               rounded-md shadow-lg 
               hover:scale-95 active:scale-90 transition-all duration-200"
@@ -47,13 +53,28 @@ export default function Notifications() {
               Reject
             </button>
           </div>
-        </li>
+        </motion.li>
       );
     })
   ) : (
-    <div className="w-full h-full flex justify-center items-center">
+    <motion.div 
+    initial={{
+      opacity:0
+    }}
+    animate={{
+      opacity:1
+    }}
+    transition={{
+      duration:0.25
+    }}
+    exit={
+      {
+        opacity:0,
+      }
+    }
+    className="w-full h-full flex justify-center items-center">
       You don't have any Notifications rigth now
-    </div>
+    </motion.div>
   );
   return (
     <>
@@ -103,9 +124,11 @@ export default function Notifications() {
         flex
         flex-col
         gap-5
+        overflow-y-auto
+        overflow-x-hidden
         "
             >
-              {notiList}
+              <AnimatePresence>{notiList}</AnimatePresence>
             </ul>
             <div className="w-full h-5/100 ">
               <button
@@ -132,7 +155,10 @@ export default function Notifications() {
     items-center 
     hover:scale-95
     active:scale-90
-    absolute md:top-5 md:right-5 top-2 right-2 hover:shadow-lg shadow-Im1 transition-all duration-200"
+    absolute md:top-5 md:right-5 top-2 right-2 hover:shadow-lg 
+    shadow-Im1 transition-all duration-200
+    cursor-pointer
+    "
       >
         <p
           className="
