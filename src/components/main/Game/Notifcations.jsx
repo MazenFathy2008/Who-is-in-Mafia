@@ -3,15 +3,15 @@ import { AnimatePresence, motion } from "motion/react";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
+import reject from "./utils/reject"
+
 export default function Notifications() {
   const [notifications, setNotificstions] = useState(null);
   const uid = useParams().userId;
   useEffect(() => {
     const notiRef = ref(db, `users/${uid}/Play/invetations`);
     const unsub = onValue(notiRef, (snapshot) => {
-      setNotificstions((prev) => {
-        return prev ? { ...prev, ...snapshot.val() } : snapshot.val();
-      });
+      setNotificstions(snapshot.val());
     });
     return unsub;
   }, []);
@@ -34,6 +34,9 @@ export default function Notifications() {
               Accept
             </button>
             <button
+            onClick={()=>{
+              reject(uid,current.roomId)
+            }}
               className="w-40 h-10 bg-red-500 
               rounded-md shadow-lg 
               hover:scale-95 active:scale-90 transition-all duration-200"
