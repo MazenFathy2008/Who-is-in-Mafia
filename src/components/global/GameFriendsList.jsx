@@ -8,10 +8,11 @@ export default function GameFriendsLis({
   setInvitedFriends,
   disabledButtonstyles,
   buttonStyles,
+  isInlobby = false,
 }) {
   const [friends, setFriends] = useState(null);
   const stopLoader = useStopLoader();
-  const { userId: uid } = useParams();
+  const { userId: uid, roomId } = useParams();
   const handleInvite = (data) => {
     setInvitedFriends((prev) => {
       return { ...(prev || {}), [data.id]: { ...data, disabled: null } };
@@ -35,7 +36,6 @@ export default function GameFriendsLis({
       setFriends((prev) => {
         if (!data) return null;
         return [
-          ...(prev || []),
           ...Object.keys(data).map((key) => {
             return {
               disabled: false,
@@ -49,7 +49,25 @@ export default function GameFriendsLis({
     });
     return unsub;
   }, []);
-  const friendsList = friends ? (
+
+  useEffect(() => {
+    if (!isInlobby) return;
+
+    const roomRef = ref(db, `rooms/${roomId}/players`);
+
+    const unsub = onValue(roomRef, (snapshot) => {
+      const players = snapshot.val() || {};
+
+      setFriends((prev) => {
+        if (!prev) return prev;
+        return prev.filter((friend) => !players[friend.id]);
+      });
+    });
+
+    return unsub;
+  }, [isInlobby, roomId]);
+
+  const friendsList = friends && friends?.length>0 ? (
     friends.map((friend) => {
       return (
         <li
@@ -89,7 +107,9 @@ export default function GameFriendsLis({
     </motion.p>
   );
   return (
-    <ul className="w-full h-1/2 border-4 rounded-2xl p-4 gap-3 flex flex-col">
+    <ul
+      className={`w-full ${isInlobby ? "h-full" : "h-1/2"} border-4 rounded-2xl p-4 gap-3 flex flex-col`}
+    >
       <AnimatePresence>{friendsList}</AnimatePresence>
     </ul>
   );
