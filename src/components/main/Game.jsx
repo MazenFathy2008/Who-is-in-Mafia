@@ -1,10 +1,17 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreatRoom from "./Game/CreateRoom";
 import JoinRoom from "./Game/JoinRoom";
 import Notifications from "./Game/Notifcations";
+import {useNavigate, useParams} from "react-router-dom"
+import isInGame from "./Game/utils/checkIfIngame"
 export default function Game() {
   const [flipped, setFlipped] = useState(false);
+  const uid = useParams().userId
+  const navigate = useNavigate()
+  useEffect(()=>{
+    isInGame(uid,navigate)
+  },[])
   return (
     <section className="w-full flex h-full justify-center items-center box-border overflow-hidden relative">
       <Notifications />
