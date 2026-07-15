@@ -23,10 +23,10 @@ export default function App() {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
         setLogged(true);
-        setLoading(false);
+        // setLoading(false);
       } else {
         setLogged(false);
-        setLoading(false);
+        // setLoading(false);
       }
     });
     return () => unsub();

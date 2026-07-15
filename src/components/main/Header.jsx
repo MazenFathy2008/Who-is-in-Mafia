@@ -1,8 +1,10 @@
 import { headerLi } from "./styles";
 import UnderLineDiv from "../global/UderLineDiv";
+import useStartLoader from "../../hooks/useStartLoader";
 import { motion } from "motion/react";
 export default function Header({ selected, setSelected }) {
   const items = ["Play", "Friends", "Profile"];
+  const startLoader = useStartLoader();
   return (
     <header
       className="
@@ -52,9 +54,14 @@ export default function Header({ selected, setSelected }) {
     "
       >
         {items.map((item) => (
-          <li key={item} onClick={() => {
-            setSelected(prev=>prev != item?item:prev)
-            }} className={headerLi}>
+          <li
+            key={item}
+            onClick={() => {
+              setSelected((prev) => (prev != item ? item : prev));
+              startLoader();
+            }}
+            className={headerLi}
+          >
             {item}
             {selected === item && (
               <UnderLineDiv

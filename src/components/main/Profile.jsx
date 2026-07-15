@@ -5,12 +5,16 @@ import { auth } from "../../config/firebase";
 import { divStyles, buttonStyles } from "./styles";
 import { useEffect, useState } from "react";
 import getData from "../../db/get";
+import useStopLoader from "../../hooks/useStopLoader";
+
 export default function Profile() {
   const [userData, setUserData] = useState(null);
   const id = useParams().userId;
+  const stopLoader = useStopLoader();
   useEffect( () => {
     getData(id, "Profile").then((resolve)=>{
       setUserData(resolve)
+      stopLoader()
     });
     
   }, []);

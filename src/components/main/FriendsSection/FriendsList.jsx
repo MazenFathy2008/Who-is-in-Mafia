@@ -5,9 +5,12 @@ import { db } from "../../../config/firebase";
 import { motion, AnimatePresence } from "motion/react";
 import { buttonStyles } from "../styles";
 import removeFriend from "./utils/removeFriend";
+import useStopLoader from "../../../hooks/useStopLoader";
+
 export default function FriendsList() {
   const [friends, setfriends] = useState(null);
   const uid = useParams().userId;
+  const stopLoader = useStopLoader();
   useEffect(() => {
     const unsub = onValue(ref(db, `users/${uid}/Friends`), (snapshot) => {
       setfriends(() => {
@@ -17,6 +20,7 @@ export default function FriendsList() {
             }
           : null;
       });
+      stopLoader();
     });
     return unsub;
   }, []);

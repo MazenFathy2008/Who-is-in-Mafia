@@ -5,15 +5,16 @@ import { onValue, ref } from "firebase/database";
 import { useParams } from "react-router-dom";
 import { db } from "../../../config/firebase";
 import createNewRoom from "./utils/create";
+import useStopLoader from "../../../hooks/useStopLoader";
 export default function CreatRoom({ flipped, setFlipped }) {
   const [friends, setFriends] = useState(null);
   const [invitedFriends, setInvitedFriends] = useState();
   const uid = useParams().userId;
+  const stopLoader = useStopLoader();
   useEffect(() => {
     const refrence = ref(db, `users/${uid}/Friends`);
     const unsub = onValue(refrence, (snapshot) => {
       const data = snapshot.val();
-
       setFriends((prev) => {
         if (!data) return null;
         return [
@@ -27,6 +28,7 @@ export default function CreatRoom({ flipped, setFlipped }) {
           }),
         ];
       });
+      stopLoader();
     });
     return unsub;
   }, []);
