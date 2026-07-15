@@ -3,11 +3,8 @@ import Main from "../components/LogAndReges/Main";
 import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import useStopLoader from "../hooks/useStopLoader"
 export default function LogInOrRegs() {
-  const stopLoader = useStopLoader()
   useEffect(() => {
-    stopLoader
     signOut(auth);
   }, []);
   const [errors, setErrors] = useState([]);
