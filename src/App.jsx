@@ -11,8 +11,9 @@ import Profile from "./components/main/Profile";
 import Friends from "./components/main/Friends";
 import Addfreinds from "./components/main/FriendsSection/AddFriend";
 import FriendsList from "./components/main/FriendsSection/FriendsList";
-import Requests from "./components/main/FriendsSection/Request.jsx"
-import Game from "./components/main/Game.jsx"
+import Requests from "./components/main/FriendsSection/Request.jsx";
+import Game from "./components/main/Game.jsx";
+import GamePage from "./Pages/Game.jsx";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
@@ -73,16 +74,31 @@ export default function App() {
             >
               <Route path=":userId" element={<User />}>
                 <Route path="profile" element={<Profile />} />
-                <Route path="play" element={<Game/>} />
+                <Route path="play" element={<Game />} />
                 <Route path="Friends" element={<Friends />}>
-                  <Route index element={<Navigate to="friends-list" replace />} />  
+                  <Route
+                    index
+                    element={<Navigate to="friends-list" replace />}
+                  />
                   <Route path="friends-list" element={<FriendsList />} />
-                  <Route path="add-friend" element={<Addfreinds />}/>
-                  <Route path="requests" element={<Requests/>} />
+                  <Route path="add-friend" element={<Addfreinds />} />
+                  <Route path="requests" element={<Requests />} />
                 </Route>
               </Route>
             </Route>
             <Route path="/logIn" element={<LogInAndReges />} />
+            <Route path="/game" element={<GamePage />}>
+              <Route path="lobby">
+                <Route path=":roomId">
+                  <Route path=":userId" />
+                </Route>
+              </Route>
+              <Route>
+                <Route path=":roomId">
+                  <Route path=":userId" />
+                </Route>
+              </Route>
+            </Route>
           </Routes>
         </BrowserRouter>
       </div>
