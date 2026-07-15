@@ -14,19 +14,22 @@ import FriendsList from "./components/main/FriendsSection/FriendsList";
 import Requests from "./components/main/FriendsSection/Request.jsx";
 import Game from "./components/main/Game.jsx";
 import GamePage from "./Pages/Game.jsx";
+import Lobby from "./components/Game/lobby.jsx";
+import Room from "./components/Game/lobby/room.jsx";
+import UserLobby from "./components/Game/lobby/user.jsx";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(true);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
+        setLoading(true);
         setLogged(true);
-        // setLoading(false);
       } else {
-        setLogged(false);
-        // setLoading(false);
+        if (auth) {
+          setLogged(false);
+        }
       }
     });
     return () => unsub();
@@ -57,9 +60,7 @@ export default function App() {
                   <Navigate to="/homepage" />
                 ) : logged == false ? (
                   <Navigate to="/logIn" />
-                ) : (
-                  <Loader />
-                )
+                ) : null
               }
             />
             <Route
@@ -87,15 +88,26 @@ export default function App() {
               </Route>
             </Route>
             <Route path="/logIn" element={<LogInAndReges />} />
-            <Route path="/game" element={<GamePage />}>
-              <Route path="lobby">
-                <Route path=":roomId">
-                  <Route path=":userId" />
+            <Route
+              path="/game"
+              element={
+                logged == true ? (
+                  <GamePage />
+                ) : logged == false ? (
+                  <Navigate to="/logIn" />
+                ) : (
+                  ""
+                )
+              }
+            >
+              <Route path="lobby" element={<Lobby />}>
+                <Route path=":roomId" element={<Room />}>
+                  <Route path=":userId" element={<UserLobby />} />
                 </Route>
               </Route>
               <Route>
-                <Route path=":roomId">
-                  <Route path=":userId" />
+                <Route path=":roomId" element={<Room />}>
+                  <Route path=":userId" element={<UserLobby />} />
                 </Route>
               </Route>
             </Route>
