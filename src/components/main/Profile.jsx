@@ -1,11 +1,19 @@
 import { motion } from "motion/react";
-import { useOutletContext ,useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import { divStyles, buttonStyles } from "./styles";
+import { useEffect, useState } from "react";
+import getData from "../../db/get";
 export default function Profile() {
-  const userData = useOutletContext();
+  const [userData, setUserData] = useState(null);
   const id = useParams().userId;
+  useEffect( () => {
+    getData(id, "Profile").then((resolve)=>{
+      setUserData(resolve)
+    });
+    
+  }, []);
   return (
     <section
       className=" 

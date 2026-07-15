@@ -1,8 +1,7 @@
-import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
+import { Outlet, useNavigate} from "react-router-dom";
 import { buttonStyles } from "./styles";
 import { useEffect, useState } from "react";
 export default function Friends() {
-  const userFriends = useOutletContext()||[];
   const sections = ["friends-list", "add-friend", "requests"];
   const [section, setSection] = useState(sections[0]);
   const navigate = useNavigate();
@@ -66,7 +65,7 @@ export default function Friends() {
     
       "
       >
-        <Outlet context={{userFriends:userFriends,back:back}} />
+        <Outlet context={{back:back}} />
       </div>
     </section>
   );
