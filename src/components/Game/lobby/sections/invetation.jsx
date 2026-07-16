@@ -34,7 +34,7 @@ export default function Invitations() {
     }
   };
   return (
-    <div className="grid grid-rows-6 gap-3">
+    <div className="grid row-span-4 md:grid-rows-6 md:row-auto gap-2 w-full">
       <GameFriendsList
         setInvitedFriends={setInvitedFriends}
         buttonStyles={buttonStyles}

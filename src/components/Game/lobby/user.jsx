@@ -26,7 +26,7 @@ export default function UserLobby() {
     };
   }, []);
   return (
-    <section className="w-full h-full grid grid-cols-4 gap-3">
+    <section className="w-full grid-rows-8 md:grid-rows-none h-full grid md:grid-cols-4 gap-3">
       <Invitations />
       <Players />
     </section>
