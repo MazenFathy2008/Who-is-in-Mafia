@@ -5,7 +5,6 @@ import { db } from "../../../../config/firebase";
 export default function Players() {
   const [players, setPlayers] = useState(null);
   const { roomId, userId } = useParams();
-  console.log(players);
   useEffect(() => {
     const playersRef = ref(db, `rooms/${roomId}/players`);
     const unsub = onValue(playersRef, (snapshot) => {
@@ -19,7 +18,6 @@ export default function Players() {
   }, []);
   const PlayersList = players
     ? players.map((player) => {
-        console.log(player);
         return (
           <li
             className={`w-full  bg-subBg    
@@ -41,7 +39,8 @@ export default function Players() {
             <span className="flex flex-col h-full">
               Name:
               <span className="text-md">
-                {player.username} {player.id == userId ? "(You)" : ""} {player.isHost?"(Host)":""}
+                {player.username} {player.id == userId ? "(You)" : ""}{" "}
+                {player.isHost ? "(Host)" : ""}
               </span>
             </span>
             <span className="flex flex-col h-full">
@@ -57,14 +56,23 @@ export default function Players() {
       })
     : null;
   return (
-    <ul
-      className="
-    col-span-3 
-    bg-Im1 flex 
+    <div className="col-span-3 flex flex-col shadow-lg">
+      <h1 className="text-2xl bg-Im2/70 backdrop:backdrop-blur-2xl text-center rounded-t-2xl h-1/10 relative top-1">
+        Room id: {roomId}
+      </h1>
+      <ul
+        className="
+        relative
+        z-90
+    h-full
+    bg-Im1/50 backdrop:backdrop-blur-2xl
+    flex 
     flex-col 
-    gap-4 p-3 rounded-2xl"
-    >
-      {PlayersList}
-    </ul>
+    gap-4 p-5 rounded-2xl
+    rounded-t-none"
+      >
+        {PlayersList}
+      </ul>
+    </div>
   );
 }
