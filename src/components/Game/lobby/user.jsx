@@ -1,14 +1,11 @@
-import { onValue, ref, remove } from "firebase/database";
-import { useEffect, useState } from "react";
+import { onValue, ref, remove, set, get } from "firebase/database";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Invitations from "./sections/invetation";
 import { db } from "../../../config/firebase";
-import GameFriendsLis from "../../global/GameFriendsList";
-import { buttonStyles } from "../../main/styles";
-import { disabledButtonstyles } from "../../main/styles";
-import Players from "./Players" 
+import Players from "./sections/Players";
 export default function UserLobby() {
   const { roomId, userId } = useParams();
-  const [invitedFriends, setInvitedFriends] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     const myRef = ref(db, `users/${userId}/Play/currentRoom`);
@@ -30,13 +27,8 @@ export default function UserLobby() {
   }, []);
   return (
     <section className="w-full h-full grid grid-cols-4 gap-3">
-      <GameFriendsLis
-        setInvitedFriends={setInvitedFriends}
-        buttonStyles={buttonStyles}
-        disabledButtonstyles={disabledButtonstyles}
-        isInlobby={true}
-      />
-    <Players/>
+      <Invitations />
+      <Players />
     </section>
   );
 }

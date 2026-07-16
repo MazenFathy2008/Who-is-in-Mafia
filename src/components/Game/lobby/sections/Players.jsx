@@ -1,7 +1,7 @@
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../../../config/firebase";
+import { db } from "../../../../config/firebase";
 export default function Players() {
   const [players, setPlayers] = useState(null);
   const { roomId, userId } = useParams();

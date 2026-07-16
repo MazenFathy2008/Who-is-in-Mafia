@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { onValue, ref, get } from "firebase/database";
+import { onValue, ref} from "firebase/database";
 import { db } from "../../config/firebase";
 import useStopLoader from "../../hooks/useStopLoader";
 import { useEffect, useState } from "react";
@@ -19,6 +19,7 @@ export default function GameFriendsLis({
       return { ...(prev || {}), [data.id]: { ...data, disabled: null } };
     });
     setFriends((prev) => {
+      
       return prev.map((friend) => {
         if (friend.id == data.id) {
           return {
@@ -55,7 +56,6 @@ export default function GameFriendsLis({
     const roomRef = ref(db, `rooms/${roomId}/players`);
     const unsub = onValue(roomRef, (snapshot) => {
       const data = snapshot.val();
-      const refrence = ref(db, `users/${uid}/Friends`);
       let newPlayers = null;
       if (data) {
         newPlayers = {
@@ -79,9 +79,7 @@ export default function GameFriendsLis({
             {friend.username}
             <div
               onClick={() => {
-                isInlobby
-                  ? null
-                  : friend.disabled
+                friend.disabled
                     ? null
                     : handleInvite(friend);
               }}
@@ -128,7 +126,7 @@ export default function GameFriendsLis({
   );
   return (
     <ul
-      className={`w-full ${isInlobby ? "h-full" : "h-1/2"} border-4 rounded-2xl p-4 gap-3 flex flex-col`}
+      className={`w-full row-span-5 overflow-x-hidden overflow-y-auto ${isInlobby ? "h-full" : "h-1/2"} border-4 rounded-2xl p-4 gap-3 flex flex-col`}
     >
       <AnimatePresence>{friendsList}</AnimatePresence>
     </ul>
