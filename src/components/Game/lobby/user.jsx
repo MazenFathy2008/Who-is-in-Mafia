@@ -5,6 +5,7 @@ import { db } from "../../../config/firebase";
 import GameFriendsLis from "../../global/GameFriendsList";
 import { buttonStyles } from "../../main/styles";
 import { disabledButtonstyles } from "../../main/styles";
+import Players from "./Players" 
 export default function UserLobby() {
   const { roomId, userId } = useParams();
   const [invitedFriends, setInvitedFriends] = useState(null);
@@ -28,16 +29,14 @@ export default function UserLobby() {
     };
   }, []);
   return (
-    <section className="w-full h-full grid grid-cols-4">
+    <section className="w-full h-full grid grid-cols-4 gap-3">
       <GameFriendsLis
         setInvitedFriends={setInvitedFriends}
         buttonStyles={buttonStyles}
         disabledButtonstyles={disabledButtonstyles}
         isInlobby={true}
       />
-      <section className="col-span-3 bg-Im1">
-
-      </section>
+    <Players/>
     </section>
   );
 }
