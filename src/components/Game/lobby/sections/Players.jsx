@@ -31,7 +31,7 @@ export default function Players() {
         return (
           <li
             className={`w-full   bg-subBg    
-        [box-shadow:0_0_5px_red] md:h-1/4
+        [box-shadow:0_0_5px_green] md:h-1/4
         h-2/5
         p-2
         md:p-4  rounded-2xl
@@ -108,18 +108,34 @@ export default function Players() {
     gap-7 p-5 rounded-2xl
     rounded-t-none
     w-full
+    overflow-y-auto
+    overflow-x-hidden
+    max-h-99
     "
       >
         {PlayersList}
       </ul>
       <div className=" flex items-center justify-center pt-1 flex-col h-25/100">
         {players && players[userId].isHost ? (
-          <button className="bg-green-500 rounded-sm shadow-sm shadow-amber-50 h-1/2 w-1/2">
+          <button
+          disabled = {!(players && Object.keys(players).length>=6)}
+            className={`${players && Object.keys(players).length >= 6 ? "bg-green-500 hover:scale-95 active:scale-90 transition-all duration-200" : "bg-green-700"} rounded-sm shadow-sm shadow-amber-50 h-1/2 w-1/2`}
+          >
             Start Game
           </button>
-        ) : <p>Watting for Host to start ...</p>}
+        ) : (
+          <p>Watting for Host to start ...</p>
+        )}
 
-        <p className="text-Im2">
+        <p
+          className={
+            players && Object.keys(players).length < 4
+              ? "text-Im2"
+              : players && Object.keys(players).length < 6
+                ? "text-yellow-300"
+                : "text-green-500"
+          }
+        >
           Number of players: {players && Object.keys(players).length}
         </p>
         <p>Must be at least 6 players to start the game</p>
