@@ -10,9 +10,7 @@ export default function Players() {
     const unsub = onValue(playersRef, (snapshot) => {
       setPlayers(() => {
         if (!snapshot.exists()) return null;
-        return Object.keys(snapshot.val()).map((key) => {
-          return snapshot.val()[key];
-        });
+        return snapshot.val();
       });
     });
     return unsub;
@@ -29,12 +27,12 @@ export default function Players() {
     }
   };
   const PlayersList = players
-    ? players.map((player) => {
+    ? Object.keys(players).map((id) => {
         return (
           <li
             className={`w-full   bg-subBg    
-        [box-shadow:0_0_5px_red] md:h-1/6
-        h-1/4
+        [box-shadow:0_0_5px_red] md:h-1/4
+        h-2/5
         p-2
         md:p-4  rounded-2xl
         flex md:items-center
@@ -42,29 +40,33 @@ export default function Players() {
         md:flex-row
         flex-col
         ${
-          player.isHost
+          players[id].isHost
             ? "outline-4 outline-amber-500 outline-offset-2"
-            : player.id == userId
+            : players[id].id == userId
               ? "outline-4 outline-white outline-offset-2"
               : ""
         }
         `}
-            key={player.id}
+            key={players[id].id}
           >
             <span className="md:flex flex-col h-full">
               Name:
-              <span className="text-md text-Im1 ml-3 md:m-0">
-                {player.username} {player.id == userId ? "(You)" : ""}{" "}
-                {player.isHost ? "(Host)" : ""}
+              <span className="text-md text-blue-500 ml-3 md:m-0">
+                {players[id].username} {players[id].id == userId ? "(You)" : ""}{" "}
+                {players[id].isHost ? "(Host)" : ""}
               </span>
             </span>
             <span className="md:flex flex-col h-full ">
               Email:
-              <span className="text-md text-Im1 ml-3 md:m-0">{player.email}</span>
+              <span className="text-md text-blue-500 ml-3 md:m-0">
+                {players[id].email}
+              </span>
             </span>
             <span className="md:flex flex-col h-full ">
               Id:
-              <span className="text-md text-Im1 ml-3 md:m-0">{player.id}</span>
+              <span className="text-md text-blue-500 ml-3 md:m-0">
+                {players[id].id}
+              </span>
             </span>
           </li>
         );
@@ -79,13 +81,13 @@ export default function Players() {
       md:text-2xl bg-Im2/70 
       backdrop:backdrop-blur-2xl 
       text-center rounded-t-2xl 
-      h-20 relative top-1 flex items-center justify-around
+      h-12 relative top-1 flex items-center justify-around
       p-1
       "
       >
         Room id: {roomId}
         <button
-          className="bg-red-900 w-30 h-8 md:h-10 rounded-xl 
+          className="bg-red-900 w-30 h-7 rounded-xl 
         transition-all duration-200 hover:scale-95  active:scale-80
         hover:bg-red-500
         
@@ -99,7 +101,7 @@ export default function Players() {
         className="
         relative
         z-90
-    h-full
+    h-75/100
     bg-Im1/50 backdrop:backdrop-blur-2xl
     flex 
     flex-col 
@@ -110,6 +112,18 @@ export default function Players() {
       >
         {PlayersList}
       </ul>
+      <div className=" flex items-center justify-center pt-1 flex-col h-25/100">
+        {players && players[userId].isHost ? (
+          <button className="bg-green-500 rounded-sm shadow-sm shadow-amber-50 h-1/2 w-1/2">
+            Start Game
+          </button>
+        ) : <p>Watting for Host to start ...</p>}
+
+        <p className="text-Im2">
+          Number of players: {players && Object.keys(players).length}
+        </p>
+        <p>Must be at least 6 players to start the game</p>
+      </div>
     </div>
   );
 }
