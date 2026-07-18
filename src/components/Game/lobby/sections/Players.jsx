@@ -34,7 +34,8 @@ export default function Players() {
     event.target.disabled = true;
     if (players[userId].isHost) {
       const roomRef = ref(db, `rooms/${roomId}/isStarted`);
-      const idList = Object.keys(players);
+      const currentPlyers = await get(ref(db, `rooms/${roomId}/players`));
+      const idList = Object.keys(currentPlyers.val());
       const mafia = idList[Math.floor(Math.random() * idList.length)];
       const doctor = chooseDoc(mafia, idList);
       const Allpromises = idList.map((id) => {
