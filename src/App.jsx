@@ -17,6 +17,7 @@ import GamePage from "./Pages/Game.jsx";
 import Lobby from "./components/Game/lobby.jsx";
 import Room from "./components/Game/room.jsx";
 import UserLobby from "./components/Game/lobby/user.jsx";
+import UserInGame from "./components/Game/play/UserinGame.jsx";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
   const [logged, setLogged] = useState(null);
@@ -106,7 +107,7 @@ export default function App() {
               </Route>
               <Route path="play">
                 <Route path=":roomId" element={<Room />}>
-                  <Route path=":userId" element={<p>s</p>} />
+                  <Route path=":userId" element={<UserInGame/>} />
                 </Route>
               </Route>
             </Route>
