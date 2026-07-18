@@ -1,4 +1,4 @@
-import { get, onValue, ref, remove } from "firebase/database";
+import { get, onValue, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../../config/firebase";
@@ -18,12 +18,44 @@ export default function Players() {
   const handleExite = async (event) => {
     event.target.disabled = true;
     const myRef = ref(db, `rooms/${roomId}/players/${userId}`);
-    remove(myRef);
+    await remove(myRef);
     const hostRef = ref(db, `rooms/${roomId}/host/id`);
     const hostId = (await get(hostRef)).val();
     if (hostId == userId) {
       const roomRef = ref(db, `rooms/${roomId}/`);
-      remove(roomRef);
+      await remove(roomRef);
+    }
+  };
+  const chooseDoc = (mafiaId, idList) => {
+    const candidates = idList.filter((id) => id !== mafiaId);
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  };
+  const handleStart = async (event) => {
+    event.target.disabled = true;
+    if (players[userId].isHost) {
+      const roomRef = ref(db, `rooms/${roomId}/isStarted`);
+      const idList = Object.keys(players);
+      const mafia = idList[Math.floor(Math.random() * idList.length)];
+      const doctor = chooseDoc(mafia, idList);
+      const Allpromises = idList.map((id) => {
+        const playerRef = ref(db, `rooms/${roomId}/players/${id}/role`);
+
+        if (id === mafia) {
+          return set(playerRef, "mafia");
+        }
+
+        if (id === doctor) {
+          return set(playerRef, "doctor");
+        }
+
+        return set(playerRef, "citizen");
+      });
+      try {
+        await Promise.all(Allpromises);
+        await set(roomRef, true);
+      } catch {
+        event.target.disabled = false;
+      }
     }
   };
   const PlayersList = players
@@ -118,8 +150,9 @@ export default function Players() {
       <div className=" flex items-center justify-center pt-1 flex-col h-25/100">
         {players && players[userId].isHost ? (
           <button
-          disabled = {!(players && Object.keys(players).length>=6)}
+            disabled={!(players && Object.keys(players).length >= 6)}
             className={`${players && Object.keys(players).length >= 6 ? "bg-green-500 hover:scale-95 active:scale-90 transition-all duration-200" : "bg-green-700"} rounded-sm shadow-sm shadow-amber-50 h-1/2 w-1/2`}
+            onClick={handleStart}
           >
             Start Game
           </button>
