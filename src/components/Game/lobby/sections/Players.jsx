@@ -32,7 +32,7 @@ export default function Players() {
           <li
             className={`w-full   bg-subBg    
         [box-shadow:0_0_5px_green] md:h-1/4
-        h-2/5
+        h-2/3
         p-2
         md:p-4  rounded-2xl
         flex md:items-center
@@ -81,7 +81,7 @@ export default function Players() {
       md:text-2xl bg-Im2/70 
       backdrop:backdrop-blur-2xl 
       text-center rounded-t-2xl 
-      h-12 relative top-1 flex items-center justify-around
+      md:h-12 h-30 relative top-1 flex items-center justify-around
       p-1
       "
       >
