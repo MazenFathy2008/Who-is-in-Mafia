@@ -8,6 +8,16 @@ export default function UserLobby() {
   const { roomId, userId } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
+    const roomRef = ref(db, `rooms/${roomId}/isStarted`);
+    const unsub = onValue(roomRef, (snapshot) => {
+      if (snapshot.val()) {
+        navigate(`/game/play/${roomId}/${userId}`)
+        console.log("Navigated");
+      }
+    });
+    return unsub;
+  }, []);
+  useEffect(() => {
     const myRef = ref(db, `users/${userId}/Play/currentRoom`);
     const roomRef = ref(db, `rooms/${roomId}/players/${userId}`);
     const unsubUser = onValue(myRef, (snapshot) => {

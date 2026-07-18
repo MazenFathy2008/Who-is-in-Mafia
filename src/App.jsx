@@ -15,7 +15,7 @@ import Requests from "./components/main/FriendsSection/Request.jsx";
 import Game from "./components/main/Game.jsx";
 import GamePage from "./Pages/Game.jsx";
 import Lobby from "./components/Game/lobby.jsx";
-import Room from "./components/Game/lobby/room.jsx";
+import Room from "./components/Game/room.jsx";
 import UserLobby from "./components/Game/lobby/user.jsx";
 export const GlobalLoaderProvider = createContext();
 export default function App() {
@@ -24,7 +24,6 @@ export default function App() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setLoading(true);
         setLogged(true);
       } else {
         if (auth) {
@@ -105,9 +104,9 @@ export default function App() {
                   <Route path=":userId" element={<UserLobby />} />
                 </Route>
               </Route>
-              <Route>
+              <Route path="play">
                 <Route path=":roomId" element={<Room />}>
-                  <Route path=":userId" element={<UserLobby />} />
+                  <Route path=":userId" element={<p>s</p>} />
                 </Route>
               </Route>
             </Route>
