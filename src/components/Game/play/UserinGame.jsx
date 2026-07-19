@@ -4,6 +4,7 @@ import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
+import MafiaTable from "./MafiaTable";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function UserInGame() {
     getRole();
   }, []);
   return (
-    <p>
+    <div className="w-full h-full">
       {!removePortal &&
         createPortal(
           <div className="w-screen h-screen top-0 fixed">
@@ -94,7 +95,7 @@ export default function UserInGame() {
           </div>,
           document.body,
         )}
-      play
-    </p>
+      <MafiaTable />
+    </div>
   );
 }
