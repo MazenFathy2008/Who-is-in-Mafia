@@ -8,6 +8,7 @@ import MafiaTable from "./MafiaTable";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const navigate = useNavigate();
+  const [startWake, setStartWake] = useState(false);
   const [animationFinshed, setAnimationFinshed] = useState(false);
   const [removePortal, setRemovePortal] = useState(false);
   const [role, setRole] = useState(null);
@@ -27,11 +28,14 @@ export default function UserInGame() {
     const role = await get(roleRef);
     setRole(role.val());
     setTimeout(() => {
+      setStartWake(true);
+    }, 5000);
+    setTimeout(() => {
       setAnimationFinshed(true);
     }, 10000);
     setTimeout(() => {
       setRemovePortal(true);
-    }, 11500);
+    }, 12000);
   };
   useEffect(() => {
     getRole();
@@ -44,40 +48,68 @@ export default function UserInGame() {
             <AnimatePresence>
               {!animationFinshed && (
                 <>
-                  <motion.p
-                    initial={{
-                      opacity: 0,
-                      x: -50,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      x: 0,
-                    }}
-                    transition={{
-                      duration: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                    }}
-                    className={`
-          ${
-            role === "mafia"
-              ? "text-Im1"
-              : role === "doctor"
-                ? "text-blue-500"
-                : "text-font"
-          } z-100 font-Jungle absolute top-1/2 
-          left-1/2 text-8xl -translate-1/2 select-none`}
-                  >
-                    {role}
-                  </motion.p>
+                  <AnimatePresence mode="wait">
+                    {!startWake? (
+                      <motion.p
+                        key="role"
+                        initial={{
+                          opacity: 0,
+                          x: -50,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          duration: 1.5,
+                        }}
+                        exit={{
+                          opacity: 0,
+                          x: 50,
+                        }}
+                        className={`
+            ${
+              role === "mafia"
+                ? "text-Im1"
+                : role === "doctor"
+                  ? "text-blue-500"
+                  : "text-font"
+            } z-100 font-Jungle absolute top-1/2 
+            left-1/2 text-8xl -translate-1/2 select-none`}
+                      >
+                        {role}
+                      </motion.p>
+                    ) :  (
+                      <motion.p
+                        key="wake"
+                        initial={{
+                          opacity: 0,
+                          x: -50,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          duration: 0.5,
+                        }}
+                        exit={{
+                          opacity: 0,
+                        }}
+                        className="flex items-center justify-center w-full z-100 font-Jungle absolute top-1/2 
+            left-1/2 text-8xl -translate-1/2 select-none text-font"
+                      >
+                        All the city wake up
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                   <motion.div
                     className="bg-black z-100 h-1/2 w-full"
                     exit={{
                       y: "-100%",
                     }}
                     transition={{
-                      duration: 1,
+                      duration: 0.5,
                     }}
                   ></motion.div>
                   <motion.div
