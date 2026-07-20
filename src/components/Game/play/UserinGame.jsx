@@ -37,7 +37,7 @@ export default function UserInGame() {
     getRole();
   }, []);
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full overflow-hidden">
       {!removePortal &&
         createPortal(
           <div className="w-screen h-screen top-0 fixed">
