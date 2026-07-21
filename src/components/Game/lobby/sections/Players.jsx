@@ -38,18 +38,18 @@ export default function Players() {
       const idList = Object.keys(currentPlyers.val());
       const mafia = idList[Math.floor(Math.random() * idList.length)];
       const doctor = chooseDoc(mafia, idList);
-      const Allpromises = idList.map((id) => {
-        const playerRef = ref(db, `rooms/${roomId}/players/${id}/role`);
-
+      const Allpromises = [];
+      idList.forEach((id) => {
         if (id === mafia) {
-          return set(playerRef, "mafia");
-        }
+          const playerRef = ref(db, `rooms/${roomId}/mafia/`);
+          const playedRef = ref(db, `rooms/mafiaPlayed`);
 
-        if (id === doctor) {
-          return set(playerRef, "doctor");
+          Allpromises.push(set(playerRef, { id }), set(playedRef, false));
+        } else if (id === doctor) {
+          const playerRef = ref(db, `rooms/${roomId}/doctor`);
+          const playedRef = ref(db, `rooms/doctorPlayed`);
+          Allpromises.push(set(playerRef, { id }), set(playedRef, false));
         }
-
-        return set(playerRef, "citizen");
       });
       try {
         await Promise.all(Allpromises);
@@ -64,22 +64,22 @@ export default function Players() {
         return (
           <li
             className={`w-full   bg-subBg    
-        [box-shadow:0_0_5px_green] md:h-1/4
-        h-2/3
-        p-2
-        md:p-4  rounded-2xl
-        flex md:items-center
-        md:justify-between
-        md:flex-row
-        flex-col
-        ${
-          players[id].isHost
-            ? "outline-4 outline-amber-500 outline-offset-2"
-            : players[id].id == userId
-              ? "outline-4 outline-white outline-offset-2"
-              : ""
-        }
-        `}
+            [box-shadow:0_0_5px_green] md:h-1/4
+            h-2/3
+            p-2
+            md:p-4  rounded-2xl
+            flex md:items-center
+            md:justify-between
+            md:flex-row
+            flex-col
+            ${
+              players[id].isHost
+                ? "outline-4 outline-amber-500 outline-offset-2"
+                : players[id].id == userId
+                  ? "outline-4 outline-white outline-offset-2"
+                  : ""
+            }
+            `}
             key={players[id].id}
           >
             <span className="md:flex flex-col h-full">
@@ -109,22 +109,22 @@ export default function Players() {
     <div className="w-full md:col-span-3 md:row-auto row-start-1 row-end-6 flex flex-col shadow-lg">
       <h1
         className="
-        flex-col
-        md:flex-row
-      md:text-2xl bg-Im2/70 
-      backdrop:backdrop-blur-2xl 
-      text-center rounded-t-2xl 
-      md:h-12 h-30 relative top-1 flex items-center justify-around
-      p-1
-      "
+            flex-col
+            md:flex-row
+          md:text-2xl bg-Im2/70 
+          backdrop:backdrop-blur-2xl 
+          text-center rounded-t-2xl 
+          md:h-12 h-30 relative top-1 flex items-center justify-around
+          p-1
+          "
       >
         Room id: {roomId}
         <button
           className="bg-red-900 w-30 h-7 rounded-xl 
-        transition-all duration-200 hover:scale-95  active:scale-80
-        hover:bg-red-500
-        
-        "
+            transition-all duration-200 hover:scale-95  active:scale-80
+            hover:bg-red-500
+            
+            "
           onClick={handleExite}
         >
           Exit
@@ -132,19 +132,19 @@ export default function Players() {
       </h1>
       <ul
         className="
-        relative
-        z-90
-    h-75/100
-    bg-Im1/50 backdrop:backdrop-blur-2xl
-    flex 
-    flex-col 
-    gap-7 p-5 rounded-2xl
-    rounded-t-none
-    w-full
-    overflow-y-auto
-    overflow-x-hidden
-    max-h-99
-    "
+            relative
+            z-90
+        h-75/100
+        bg-Im1/50 backdrop:backdrop-blur-2xl
+        flex 
+        flex-col 
+        gap-7 p-5 rounded-2xl
+        rounded-t-none
+        w-full
+        overflow-y-auto
+        overflow-x-hidden
+        max-h-99
+        "
       >
         {PlayersList}
       </ul>
