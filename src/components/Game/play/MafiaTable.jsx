@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-export default function MafiaTable() {
+export default function MafiaTable({role}){
   const [players, setPlayers] = useState(null);
   const [radius, setRadius] = useState(0);
   const [shownPlayer, setShownPlayer] = useState(null);
@@ -63,9 +63,9 @@ export default function MafiaTable() {
         >
           {players[id].username}
           <span className="md:text-5xl text-2xl">
-            {players[id].id == userId && players[id].role == "mafia"
+            {players[id].id == userId &&role == "mafia"
               ? "🥷"
-              : players[id].id == userId && players[id].role == "doctor"
+              : players[id].id == userId && role == "doctor"
                 ? "🧑‍⚕️"
                 : "🙎‍♂️"}
           </span>
@@ -146,7 +146,7 @@ export default function MafiaTable() {
                   </button>
                 )}
                 {shownPlayer.id != userId &&
-                  players[userId].role === "mafia" && (
+                  role === "mafia" && (
                     <button
                       className="bg-Im1 h-10 rounded-lg 
                 shadow-lg text-font hover:scale-95 active:scale-90 
@@ -155,7 +155,7 @@ export default function MafiaTable() {
                       Kill
                     </button>
                   )}
-                  {players[userId].role === "doctor" && (
+                  {role === "doctor" && (
                     <button
                       className="bg-blue-700 h-10 rounded-lg 
                 shadow-lg text-font hover:scale-95 active:scale-90 

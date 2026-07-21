@@ -161,7 +161,7 @@ export default function UserInGame() {
         </div>,
         document.body,
       )}
-      <MafiaTable />
+      <MafiaTable role={role}/>
     </div>
   );
 }
