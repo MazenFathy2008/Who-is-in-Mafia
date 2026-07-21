@@ -1,5 +1,5 @@
 import { get, onValue, ref } from "firebase/database";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -11,6 +11,7 @@ export default function UserInGame() {
   const animations = ["role", "wake", "finshed"];
   const [animateState, setanimateState] = useState(animations[0]);
   const [role, setRole] = useState(null);
+  const [zIndex , setZindex]= useState(100)
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
@@ -23,9 +24,22 @@ export default function UserInGame() {
     return unSub;
   }, []);
   const getRole = async () => {
-    const roleRef = ref(db, `rooms/${roomId}/players/${userId}/role`);
-    const role = await get(roleRef);
-    setRole(role.val());
+    const ChekMafiaRef = ref(db, `rooms/${roomId}/mafia/id`);
+    const ChekDoctorRef = ref(db, `rooms/${roomId}/doctor/id`);
+    let role;
+    try {
+      role = (await get(ChekMafiaRef)).val();
+      if (role === userId) role = "mafia";
+    } catch {
+      try {
+        role = (await get(ChekDoctorRef)).val();
+        if (role === userId) role = "doctor";
+      } catch {
+        role = " citizen";
+      }
+    } finally {
+      setRole(role);
+    }
   };
   useEffect(() => {
     getRole();
@@ -33,6 +47,10 @@ export default function UserInGame() {
       setanimateState(animations[1]);
       const t2 = setTimeout(() => {
         setanimateState(animations[2]);
+        const t3 = setTimeout(() => {
+          setZindex(-10)
+        }, 1500);
+        return ()=>{clearTimeout(t3)}
       }, 5000);
       return () => {
         clearTimeout(t2);
@@ -45,7 +63,9 @@ export default function UserInGame() {
   return (
     <div className="w-full h-full overflow-hidden">
       {createPortal(
-        <div className="w-screen h-screen top-0 fixed">
+        <div style={{
+          zIndex:zIndex
+        }} className="w-screen h-screen top-0 fixed">
           <>
             <AnimatePresence mode="wait">
               {animateState === animations[0] ? (
