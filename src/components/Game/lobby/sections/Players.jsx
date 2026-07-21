@@ -42,12 +42,12 @@ export default function Players() {
       idList.forEach((id) => {
         if (id === mafia) {
           const playerRef = ref(db, `rooms/${roomId}/mafia/`);
-          const playedRef = ref(db, `rooms/mafiaPlayed`);
+          const playedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
 
           Allpromises.push(set(playerRef, { id }), set(playedRef, false));
         } else if (id === doctor) {
           const playerRef = ref(db, `rooms/${roomId}/doctor`);
-          const playedRef = ref(db, `rooms/doctorPlayed`);
+          const playedRef = ref(db, `rooms/${roomId}/doctorPlayed`);
           Allpromises.push(set(playerRef, { id }), set(playedRef, false));
         }
       });
