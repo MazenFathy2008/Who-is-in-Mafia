@@ -3,11 +3,32 @@ import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-export default function MafiaTable({role}){
+export default function MafiaTable({ role }) {
   const [players, setPlayers] = useState(null);
   const [radius, setRadius] = useState(0);
   const [shownPlayer, setShownPlayer] = useState(null);
   const { roomId, userId } = useParams();
+  const [playedState, setPlayedState] = useState([false, false]);
+  console.log(playedState);
+  useEffect(() => {
+    const mafiaIsPlayedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
+    const doctorIsPlayedRef = ref(db, `rooms/${roomId}/doctorPlayed`);
+    const unsub1 = onValue(mafiaIsPlayedRef, (snap) => {
+      setPlayedState((prev) => {
+        return [snap.val(), prev[1]];
+      });
+    });
+    const unsub2 = onValue(doctorIsPlayedRef, (snap) => {
+      console.log(snap.val());
+      setPlayedState((prev) => {
+        return [prev[0], snap.val()];
+      });
+    });
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, []);
   useEffect(() => {
     const playersRefrences = ref(db, `rooms/${roomId}/players`);
     onValue(playersRefrences, (snapshot) => {
@@ -63,7 +84,7 @@ export default function MafiaTable({role}){
         >
           {players[id].username}
           <span className="md:text-5xl text-2xl">
-            {players[id].id == userId &&role == "mafia"
+            {players[id].id == userId && role == "mafia"
               ? "🥷"
               : players[id].id == userId && role == "doctor"
                 ? "🧑‍⚕️"
@@ -106,7 +127,6 @@ export default function MafiaTable({role}){
           text-background
           overflow-y-auto
           overflow-x-hidden
-
           "
             >
               <button
@@ -137,33 +157,47 @@ export default function MafiaTable({role}){
               )}
               <div className=" w-full flex flex-col gap-2">
                 {shownPlayer.id != userId && (
-                  <button
-                    className="bg-Im2 h-10 rounded-lg 
-                shadow-lg text-font hover:scale-95 active:scale-90 
-                transition-all duration-200"
+                  <div
+                    className={`${
+                      playedState[0] && playedState[1]
+                        ? "bg-Im2 cursor-pointer hover:scale-95 active:scale-90"
+                        : "bg-Im1 cursor-not-allowed"
+                    } h-10 rounded-lg 
+                shadow-lg text-font 
+                transition-all flex items-center justify-center 
+                duration-200 `}
                   >
                     Vote
-                  </button>
+                  </div>
                 )}
-                {shownPlayer.id != userId &&
-                  role === "mafia" && (
-                    <button
-                      className="bg-Im1 h-10 rounded-lg 
-                shadow-lg text-font hover:scale-95 active:scale-90 
-                transition-all duration-200"
-                    >
-                      Kill
-                    </button>
-                  )}
-                  {role === "doctor" && (
-                    <button
-                      className="bg-blue-700 h-10 rounded-lg 
-                shadow-lg text-font hover:scale-95 active:scale-90 
-                transition-all duration-200"
-                    >
-                      heal
-                    </button>
-                  )}
+                {shownPlayer.id != userId && role === "mafia" && (
+                  <div
+                    className={`${
+                      !(playedState[0]&&playedState[1])
+                        ? "bg-red-500 cursor-pointer hover:scale-95 active:scale-90"
+                        : "bg-red-900 cursor-not-allowed"
+                    } h-10 rounded-lg 
+                shadow-lg text-font  
+                transition-all duration-200
+                flex items-center justify-center
+                `}
+                  >
+                    Kill
+                  </div>
+                )}
+                {role === "doctor" && (
+                  <div
+                    className={`${
+                      playedState[0]
+                        ? "bg-blue-500 cursor-pointer hover:scale-95 active:scale-90"
+                        : "bg-blue-900 cursor-not-allowed"
+                    } h-10 rounded-lg 
+                shadow-lg text-font 
+                transition-all duration-200 flex items-center justify-center`}
+                  >
+                    heal
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
