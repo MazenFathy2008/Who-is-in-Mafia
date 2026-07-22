@@ -1,4 +1,4 @@
-import { get, onValue, ref } from "firebase/database";
+import { get, onValue, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,18 +11,31 @@ export default function UserInGame() {
   const animations = ["role", "wake", "finshed"];
   const [animateState, setanimateState] = useState(animations[0]);
   const [role, setRole] = useState(null);
-  const [zIndex , setZindex]= useState(100)
+  const [zIndex, setZindex] = useState(100);
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
       const isStarted = snapshot.val();
       if (!isStarted) {
+        if (role == "mafia") {
+          const mafiaDataRef = ref(db, `rooms/${roomId}/mafia`);
+          const mafiaPlayedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
+          remove(mafiaPlayedRef).then(() => {
+            remove(mafiaDataRef);
+          });
+        } else if (role == "doctor") {
+          const doctorDataRef = ref(db, `rooms/${roomId}/doctor`);
+          const doctorPlayedRef = ref(db, `rooms/${roomId}/doctorPlayed`);
+          remove(doctorPlayedRef).then(() => {
+            remove(doctorDataRef);
+          });
+        }
         navigate(`/game/lobby/${roomId}/${userId}`);
       }
     });
 
     return unSub;
-  }, []);
+  }, [role]);
   const getRole = async () => {
     const ChekMafiaRef = ref(db, `rooms/${roomId}/mafia/id`);
     const ChekDoctorRef = ref(db, `rooms/${roomId}/doctor/id`);
@@ -48,9 +61,11 @@ export default function UserInGame() {
       const t2 = setTimeout(() => {
         setanimateState(animations[2]);
         const t3 = setTimeout(() => {
-          setZindex(-10)
+          setZindex(-10);
         }, 1500);
-        return ()=>{clearTimeout(t3)}
+        return () => {
+          clearTimeout(t3);
+        };
       }, 5000);
       return () => {
         clearTimeout(t2);
@@ -63,9 +78,12 @@ export default function UserInGame() {
   return (
     <div className="w-full h-full overflow-hidden">
       {createPortal(
-        <div style={{
-          zIndex:zIndex
-        }} className="w-screen h-screen top-0 fixed">
+        <div
+          style={{
+            zIndex: zIndex,
+          }}
+          className="w-screen h-screen top-0 fixed"
+        >
           <>
             <AnimatePresence mode="wait">
               {animateState === animations[0] ? (
@@ -161,7 +179,7 @@ export default function UserInGame() {
         </div>,
         document.body,
       )}
-      <MafiaTable role={role}/>
+      <MafiaTable role={role} />
     </div>
   );
 }
