@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
+import startMafia from "./utils/mafiaStart";
 export default function MafiaTable({ role }) {
   const [players, setPlayers] = useState(null);
   const [radius, setRadius] = useState(0);
@@ -12,11 +13,22 @@ export default function MafiaTable({ role }) {
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(phaseRef, (snapshot) => {
-      console.log(snapshot.val())
+      console.log(snapshot.val());
       setPhase(snapshot.val());
     });
     return unsub;
   }, []);
+  useEffect(() => {
+    if (role === "mafia" && phase === "night-phase") {
+      const t1 = setTimeout(() => {
+        console.log("Entered")
+        startMafia(roomId);
+      }, 20000);
+      return () => {
+        clearTimeout(t1);
+      };
+    }
+  }, [phase,role]);
   useEffect(() => {
     const playersRefrences = ref(db, `rooms/${roomId}/players`);
     onValue(playersRefrences, (snapshot) => {
