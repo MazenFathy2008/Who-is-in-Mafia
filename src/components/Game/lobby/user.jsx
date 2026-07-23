@@ -12,9 +12,11 @@ export default function UserLobby() {
   const [isStarted, setIsstarted] = useState(false);
   useEffect(() => {
     const roomRef = ref(db, `rooms/${roomId}/isStarted`);
+    const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(roomRef, (snapshot) => {
       if (snapshot.val()) {
         setIsstarted(true);
+        set(phaseRef, "night-phase");
       }
     });
     return unsub;

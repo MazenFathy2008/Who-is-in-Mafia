@@ -8,26 +8,14 @@ export default function MafiaTable({ role }) {
   const [radius, setRadius] = useState(0);
   const [shownPlayer, setShownPlayer] = useState(null);
   const { roomId, userId } = useParams();
-  const [playedState, setPlayedState] = useState([false, false]);
-  console.log(playedState);
+  const [phase, setPhase] = useState("");
   useEffect(() => {
-    const mafiaIsPlayedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
-    const doctorIsPlayedRef = ref(db, `rooms/${roomId}/doctorPlayed`);
-    const unsub1 = onValue(mafiaIsPlayedRef, (snap) => {
-      setPlayedState((prev) => {
-        return [snap.val(), prev[1]];
-      });
+    const phaseRef = ref(db, `rooms/${roomId}/phase`);
+    const unsub = onValue(phaseRef, (snapshot) => {
+      console.log(snapshot.val())
+      setPhase(snapshot.val());
     });
-    const unsub2 = onValue(doctorIsPlayedRef, (snap) => {
-      console.log(snap.val());
-      setPlayedState((prev) => {
-        return [prev[0], snap.val()];
-      });
-    });
-    return () => {
-      unsub1();
-      unsub2();
-    };
+    return unsub;
   }, []);
   useEffect(() => {
     const playersRefrences = ref(db, `rooms/${roomId}/players`);
@@ -159,7 +147,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && (
                   <div
                     className={`${
-                      playedState[0] && playedState[1]
+                      phase === "vote-phase"
                         ? "bg-Im2 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-Im1 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -173,7 +161,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && role === "mafia" && (
                   <div
                     className={`${
-                      !(playedState[0]&&playedState[1])
+                      phase === "mafia-turn"
                         ? "bg-red-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-red-900 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -188,7 +176,7 @@ export default function MafiaTable({ role }) {
                 {role === "doctor" && (
                   <div
                     className={`${
-                      playedState[0]
+                      phase === "doctor-turn"
                         ? "bg-blue-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-blue-900 cursor-not-allowed"
                     } h-10 rounded-lg 
