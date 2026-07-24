@@ -1,17 +1,38 @@
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function GameOverLay({ phase }) {
   const overLay = phase;
+  const [shown, setShown] = useState(true);
+  const [zIndex, setzIndex] = useState(100);
+  useEffect(() => {
+    if (phase.shown) {
+      setShown(true);
+    } else {
+      const shownTimer = setTimeout(() => {
+        setShown(false);
+      }, 5000);
+      const zIndexTimer = setTimeout(() => {
+        setzIndex(-1);
+      }, 6500);
+      return () => {
+        clearTimeout(shownTimer);
+        clearTimeout(zIndexTimer);
+      };
+    }
+  }, [phase]);
   return createPortal(
     <div
+      style={{
+        zIndex: zIndex,
+      }}
       className="w-screen h-screen top-0 fixed"
     >
       <AnimatePresence mode="wait">
-        {overLay.shown&& (
+        {shown && (
           <>
             <motion.p
-              key={phase}
+              key={overLay.text}
               initial={{
                 opacity: 0,
                 x: -50,
@@ -51,7 +72,7 @@ export default function GameOverLay({ phase }) {
               }}
               className="bg-black absolute bottom-0 z-99 h-1/2 w-full"
             ></motion.div>
-          </>     
+          </>
         )}
       </AnimatePresence>
     </div>,
