@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import MafiaTable from "./MafiaTable";
+import setPhase from "./utils/setPhase";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const navigate = useNavigate();
@@ -12,6 +13,44 @@ export default function UserInGame() {
   const [animateState, setanimateState] = useState(animations[0]);
   const [role, setRole] = useState(null);
   const [zIndex, setZindex] = useState(100);
+  const isHost = async () => {
+    const myRef = ref(db, `rooms/${roomId}/players/${userId}/isHost`);
+    const isHost = await get(myRef);
+    return isHost.val();
+  };
+  useEffect(() => {
+    let unsubMafiaReady = null;
+    let unsubDoctorReady = null;
+
+    isHost().then((host) => {
+      if (!host) return;
+
+      unsubMafiaReady = onValue(
+        ref(db, `rooms/${roomId}/mafiaReady`),
+        (snapshot) => {
+
+          if (snapshot.val()) {
+            setPhase("mafia-turn", roomId);
+          }
+        },
+      );
+
+      unsubDoctorReady = onValue(
+        ref(db, `rooms/${roomId}/doctorReady`),
+        (snapshot) => {
+
+          if (snapshot.val()) {
+            setPhase("doctor-turn", roomId);
+          }
+        },
+      );
+    });
+
+    return () => {
+      unsubMafiaReady?.();
+      unsubDoctorReady?.();
+    };
+  }, []);
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
@@ -19,14 +58,14 @@ export default function UserInGame() {
       if (!isStarted) {
         if (role == "mafia") {
           const mafiaDataRef = ref(db, `rooms/${roomId}/mafia`);
-          const mafiaPlayedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
-          remove(mafiaPlayedRef).then(() => {
+          const mafiaReadyRef = ref(db, `rooms/${roomId}/mafiaReady`);
+          remove(mafiaReadyRef).then(() => {
             remove(mafiaDataRef);
           });
         } else if (role == "doctor") {
           const doctorDataRef = ref(db, `rooms/${roomId}/doctor`);
-          const doctorPlayedRef = ref(db, `rooms/${roomId}/doctorPlayed`);
-          remove(doctorPlayedRef).then(() => {
+          const doctorReadyRef = ref(db, `rooms/${roomId}/doctorReady`);
+          remove(doctorReadyRef).then(() => {
             remove(doctorDataRef);
           });
         }

@@ -1,6 +1,7 @@
 import { ref, set } from "firebase/database";
-import {db} from "../../../../config/firebase"
+import { db } from "../../../../config/firebase";
 export default function Mafia(roomId) {
-  const mafiaPlayedRef = ref(db, `rooms/${roomId}/mafiaPlayed`);
-  set(mafiaPlayedRef, true);
+  const mafiaReadydRef = ref(db, `rooms/${roomId}/mafiaReady`);
+  console.log("entered")
+  set(mafiaReadydRef, true);
 }
