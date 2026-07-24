@@ -2,6 +2,7 @@ import { get, onValue, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../../config/firebase";
+import { PHASES } from "../../play/utils/phases";
 export default function Players() {
   const [players, setPlayers] = useState(null);
   const { roomId, userId } = useParams();
@@ -52,7 +53,7 @@ export default function Players() {
       try {
         await Promise.all(Allpromises);
         await Promise.all([
-          set(ref(db, `rooms/${roomId}/phase`), "show-role"),
+          set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE),
           set(ref(db, `rooms/${roomId}/mafiaTarget`), null),
           set(ref(db, `rooms/${roomId}/doctorTarget`), null),
         ]);
