@@ -1,4 +1,4 @@
-import { onValue, ref, remove, set, get } from "firebase/database";
+import { onValue, ref, remove} from "firebase/database";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -12,11 +12,9 @@ export default function UserLobby() {
   const [isStarted, setIsstarted] = useState(false);
   useEffect(() => {
     const roomRef = ref(db, `rooms/${roomId}/isStarted`);
-    const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(roomRef, (snapshot) => {
       if (snapshot.val()) {
         setIsstarted(true);
-        set(phaseRef, "night-phase");
       }
     });
     return unsub;
