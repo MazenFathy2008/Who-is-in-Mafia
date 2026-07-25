@@ -12,84 +12,158 @@ export default function UserInGame() {
   const navigate = useNavigate();
   const phaseData = {
     [PHASES.SHOW_ROLE]: {
-      text: role,
-      color:
-        role === "mafia"
-          ? "text-Im1"
-          : role === "doctor"
-            ? "text-blue-500"
-            : "text-font",
-      shown: true,
+      stages: [
+        {
+          text: role,
+          color:
+            role === "mafia"
+              ? "text-Im1"
+              : role === "doctor"
+                ? "text-blue-500"
+                : "text-font",
+          shown: true,
+          duration: 5000,
+        },
+      ],
     },
 
     [PHASES.EVERYONE_WAKE]: {
-      text: "Everyone Wake Up",
-      color: "text-font",
-      shown: false,
+      stages: [
+        {
+          text: "Everyone Wake Up",
+          color: "text-font",
+          shown: false,
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.EVERYONE_SLEEP]: {
-      text: "Everyone Sleep",
-      color: "text-font",
-      shown: true,
+      stages: [
+        {
+          text: "Everyone Sleep",
+          color: "text-font",
+          shown: true,
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.MAFIA_WAKE]: {
-      text: "Mafia Wake Up",
-      color: "text-Im1",
-      shown: role !== "mafia",
+      stages: [
+        {
+          text: "Mafia Wake Up",
+          color: "text-Im1",
+          shown: role !== "mafia",
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.MAFIA_SLEEP]: {
-      text: "Mafia Sleep",
-      color: "text-Im1",
-      shown: true,
+      stages: [
+        {
+          text: "Mafia Sleep",
+          color: "text-Im1",
+          shown: true,
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.DOCTOR_WAKE]: {
-      text: "Doctor Wake Up",
-      color: "text-blue-500",
-      shown: role !== "doctor",
+      stages: [
+        {
+          text: "Doctor Wake Up",
+          color: "text-blue-500",
+          shown: role !== "doctor",
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.DOCTOR_SLEEP]: {
-      text: "Doctor Sleep",
-      color: "text-blue-500",
-      shown: true,
-    },
-    [PHASES.REVEAL_RESULTS]: {
-      text: "Night Results",
-      color: "text-font",
-      shown: false,
-    },
-    [PHASES.DISCUSSION]: {
-      text: "Discussion",
-      color: "text-font",
-      shown: false,
-    },
-
-    [PHASES.VOTING]: {
-      text: "Voting Time",
-      color: "text-font",
-      shown: false,
-    },
-
-    [PHASES.REVEAL_VOTE]: {
-      text: "Vote Results",
-      color: "text-font",
-      shown: false,
+      stages: [
+        {
+          text: "Doctor Sleep",
+          color: "text-blue-500",
+          shown: true,
+          duration: 3000,
+        },
+      ],
     },
 
     [PHASES.SHOW_RESULT]: {
-      text: "Night Results",
-      color: "text-font",
-      shown: false,
+      stages: [
+        {
+          text: "Mafia chose...",
+          color: "text-Im1",
+          shown: true,
+          duration: 4000,
+        },
+        {
+          text: "Doctor saved...",
+          color: "text-blue-500",
+          shown: true,
+          duration: 4000,
+        },
+        {
+          text: "Nobody died", 
+          color: "text-font",
+          shown: true,
+          duration: 5000,
+        },
+      ],
+    },
+
+    [PHASES.DISCUSSION]: {
+      stages: [
+        {
+          text: "Discussion",
+          color: "text-font",
+          shown: false,
+          duration: 30000,
+        },
+      ],
+    },
+
+    [PHASES.VOTING]: {
+      stages: [
+        {
+          text: "Voting Time",
+          color: "text-font",
+          shown: false,
+          duration: 20000,
+        },
+      ],
+    },
+
+    [PHASES.REVEAL_VOTE]: {
+      stages: [
+        {
+          text: "You voted for...",
+          color: "text-font",
+          shown: true,
+          duration: 5000,
+        },
+        {
+          text: "He was Mafia!",
+          color: "text-Im1",
+          shown: true,
+          duration: 5000,
+        },
+      ],
     },
 
     [PHASES.GAME_OVER]: {
-      text: "Game Over",
-      color: "text-red-500",
-      shown: false,
+      stages: [
+        {
+          text: "Game Over",
+          color: "text-red-500",
+          shown: false,
+          duration: 5000,
+        },
+      ],
     },
   };
   const [phase, setPhase] = useState(null);
@@ -98,6 +172,7 @@ export default function UserInGame() {
     const isHost = await get(myRef);
     return isHost.val();
   };
+
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
