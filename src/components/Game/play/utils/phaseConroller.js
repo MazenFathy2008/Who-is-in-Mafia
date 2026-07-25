@@ -1,4 +1,4 @@
-import { set, ref, onValue, get } from "firebase/database";
+import { set, ref, onValue, get, remove } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
 export async function startGame(roomId) {
@@ -44,7 +44,7 @@ export const GAME_FLOW = {
   },
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
-    duration: 5000,
+    duration: 20000,
     event: true,
   },
   [PHASES.DISCUSSION]: {
@@ -77,8 +77,10 @@ export const startGameloop = (roomId) => {
           mafiaTurn(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
           doctorTurn(roomId, phaseRef, currentPhase);
+        } else if (currentPhase === PHASES.SHOW_RESULT) {
+          ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
-          votes(roomId,phaseRef,currentPhase);
+          votes(roomId, phaseRef, currentPhase);
         }
       }
     }
@@ -105,6 +107,32 @@ const doctorTurn = async (roomId, phaseRef, currentPhase) => {
       unsubDoctorTarget();
     }
   });
+};
+const ShowResults = async (roomId, phaseRef, currentPhase) => {
+  const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
+  const doctorTargetRef = ref(db, `rooms/${roomId}/doctorTarget`);
+  const revealTargetRef = ref(db, `rooms/${roomId}/reveal-target`);
+  const mafiaTarget = (await get(mafiaTargetRef)).val();
+  const doctorTarget = (await get(doctorTargetRef)).val();
+  console.log("doctor target: " + doctorTarget);
+  console.log("mafia target: " + mafiaTarget);
+  if (mafiaTarget !== doctorTarget) {
+    await set(ref(db, `rooms/${roomId}/players/${mafiaTarget}/killed`), true);
+  }
+  set(revealTargetRef, {
+    doctorTarget: doctorTarget,
+    mafiaTarget: mafiaTarget,
+  });
+  setTimeout(async () => {
+    try {
+      await remove(revealTargetRef);
+      await remove(doctorTargetRef);
+      await remove(mafiaTargetRef);
+      await set(phaseRef, GAME_FLOW[currentPhase].next);
+    } catch {
+      set(phaseRef, currentPhase);
+    }
+  }, GAME_FLOW[currentPhase].duration);
 };
 const votes = async (roomId, phaseRef, currentPhase) => {
   const votesRef = ref(db, `rooms/${roomId}/votes`);
