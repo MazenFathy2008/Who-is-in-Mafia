@@ -10,7 +10,15 @@ export default function MafiaTable({ role }) {
   const [radius, setRadius] = useState(0);
   const [shownPlayer, setShownPlayer] = useState(null);
   const { roomId, userId } = useParams();
+  const [voted, setVoted] = useState(true);
   const [phase, setPhase] = useState("");
+  useEffect(() => {
+    const myVotedRef = ref(db, `rooms/${roomId}/players/${userId}/voted`);
+    const unsub = onValue(myVotedRef, (snapshot) => {
+      setVoted(snapshot.val());
+    });
+    return unsub;
+  }, []);
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(phaseRef, (snapshot) => {
@@ -22,7 +30,7 @@ export default function MafiaTable({ role }) {
   }, []);
   useEffect(() => {
     const playersRefrences = ref(db, `rooms/${roomId}/players`);
-    onValue(playersRefrences, (snapshot) => {
+    const playersUnsub = onValue(playersRefrences, (snapshot) => {
       const data = snapshot.val();
       Object.keys(data).forEach((key) => {
         if (key != userId) {
@@ -31,6 +39,7 @@ export default function MafiaTable({ role }) {
       });
       setPlayers(data);
     });
+    return playersUnsub;
   }, []);
   useEffect(() => {
     const updateRadius = () => {
@@ -149,8 +158,13 @@ export default function MafiaTable({ role }) {
               <div className=" w-full flex flex-col gap-2">
                 {shownPlayer.id != userId && (
                   <div
+                    onClick={() => {
+                      phase === PHASES.VOTING && !voted
+                        ? gameEvents.vote(roomId, userId, shownPlayer.id)
+                        : "";
+                    }}
                     className={`${
-                      phase === PHASES.VOTING
+                      phase === PHASES.VOTING && !voted
                         ? "bg-Im2 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-Im1 cursor-not-allowed"
                     } h-10 rounded-lg 
