@@ -1,4 +1,4 @@
-import { get, onValue, ref, remove,set } from "firebase/database";
+import { get, onValue, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
@@ -104,9 +104,9 @@ export default function UserInGame() {
       const isStarted = snapshot.val();
       if (!isStarted) {
         isHost()
-          .then((resolve) => {
+          .then(async (resolve) => {
             if (resolve) {
-              return Promise.all([
+              await Promise.all([
                 remove(ref(db, `rooms/${roomId}/phase`)),
                 remove(ref(db, `rooms/${roomId}/mafiaTarget`)),
                 remove(ref(db, `rooms/${roomId}/doctorTarget`)),
@@ -115,14 +115,29 @@ export default function UserInGame() {
                 remove(ref(db, `rooms/${roomId}/doctorKilled/`)),
                 remove(ref(db, `rooms/${roomId}/votes/`)),
               ]);
+              const playersRef = ref(db, `rooms/${roomId}/players`);
+              const snapshot = await get(playersRef);
+              const cleanPlayers = {};
+              const players = snapshot.val();
+              if (!players) {
+                navigate(`/game/lobby/${roomId}/${userId}`);
+                return;
+              }
+              Object.keys(players).forEach((id) => {
+                cleanPlayers[id] = {
+                  ...players[id],
+                  voted: null,
+                  killed: null,
+                };
+              });
+              await set(playersRef, cleanPlayers);
             }
           })
-          .then(() => {
+          .finally(() => {
             navigate(`/game/lobby/${roomId}/${userId}`);
           });
       }
     });
-
     return unSub;
   }, [role]);
   const getRole = async () => {
