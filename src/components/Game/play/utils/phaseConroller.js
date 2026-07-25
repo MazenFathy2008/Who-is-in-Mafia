@@ -3,7 +3,6 @@ import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
 export async function startGame(roomId) {
   await set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE);
-  console.log(roomId);
 }
 
 export const GAME_FLOW = {
@@ -59,8 +58,8 @@ export const GAME_FLOW = {
   },
   [PHASES.REVEAL_VOTE]: {
     next: PHASES.EVERYONE_WAKE,
-    duration: 5000,
-    event: false,
+    duration: 25000,
+    event: true,
   },
 };
 export const startGameloop = (roomId) => {
@@ -81,6 +80,8 @@ export const startGameloop = (roomId) => {
           ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
           votes(roomId, phaseRef, currentPhase);
+        } else if (currentPhase === PHASES.REVEAL_VOTE) {
+          revealvote(roomId, phaseRef, currentPhase);
         }
       }
     }
@@ -114,8 +115,6 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
   const revealTargetRef = ref(db, `rooms/${roomId}/reveal-target`);
   const mafiaTarget = (await get(mafiaTargetRef)).val();
   const doctorTarget = (await get(doctorTargetRef)).val();
-  console.log("doctor target: " + doctorTarget);
-  console.log("mafia target: " + mafiaTarget);
   if (mafiaTarget !== doctorTarget) {
     await set(ref(db, `rooms/${roomId}/players/${mafiaTarget}/killed`), true);
   }
@@ -143,11 +142,26 @@ const votes = async (roomId, phaseRef, currentPhase) => {
     const alivePlayers = Object.keys(players).filter(
       (id) => !players[id].killed,
     );
-    console.log(alivePlayers.length);
     if (votesData.sum === alivePlayers.length) {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
       unSubVotes();
-      console.log("true");
     }
   });
+};
+const revealvote = async (roomId, phaseRef, currentPhase) => {
+  const votesRef = ref(db, `rooms/${roomId}/votes`);
+  const playersRef = ref(db, `rooms/${roomId}/players`);
+  const players = await get(playersRef);
+  const newData = {};
+  Object.keys(players.val()).forEach((id) => {
+    newData[id] = {
+      ...players.val()[id],
+      voted: null,
+    };
+  });
+  setTimeout(async () => {
+    await remove(votesRef);
+    await set(playersRef, newData);
+    await set(phaseRef, GAME_FLOW[currentPhase].next);
+  },GAME_FLOW[currentPhase].duration);
 };
