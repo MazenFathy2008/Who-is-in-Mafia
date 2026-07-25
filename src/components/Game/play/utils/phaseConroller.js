@@ -117,6 +117,11 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
   const mafiaTarget = (await get(mafiaTargetRef)).val();
   const doctorTarget = (await get(doctorTargetRef)).val();
   if (mafiaTarget !== doctorTarget) {
+    const doctorRef = ref(db, `rooms/${roomId}/doctor/id`);
+    const doctor = (await get(doctorRef)).val();
+    if (doctor === mafiaTarget) {
+      await set(ref(db, `rooms/${roomId}/doctorKilled`), true);
+    }
     await set(ref(db, `rooms/${roomId}/players/${mafiaTarget}/killed`), true);
   }
   set(revealTargetRef, {
@@ -152,8 +157,8 @@ const votes = async (roomId, phaseRef, currentPhase) => {
 const revealvote = async (roomId, phaseRef, currentPhase) => {
   const playersRef = ref(db, `rooms/${roomId}/players`);
   const players = await get(playersRef);
-  const continueGame  = await chekIfgameOver(roomId, phaseRef, players.val());
-  if (continueGame ) {
+  const continueGame = await chekIfgameOver(roomId, phaseRef, players.val());
+  if (continueGame) {
     setTimeout(async () => {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
     }, GAME_FLOW[currentPhase].duration);
