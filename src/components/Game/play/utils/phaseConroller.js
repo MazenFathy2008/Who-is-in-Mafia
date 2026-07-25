@@ -1,7 +1,6 @@
 import { set, ref, onValue, get, remove } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
-import { object } from "motion/react-client";
 export async function startGame(roomId) {
   await set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE);
 }
@@ -65,11 +64,22 @@ export const GAME_FLOW = {
 };
 export const startGameloop = (roomId) => {
   const phaseRef = ref(db, `rooms/${roomId}/phase`);
-  const currentPhaseShot = onValue(phaseRef, (snapshot) => {
+  let time = null;
+  const currentPhaseShot = onValue(phaseRef, async (snapshot) => {
+    clearTimeout(time);
     const currentPhase = snapshot.val();
     if (currentPhase != PHASES.GAME_OVER && currentPhase) {
       if (!GAME_FLOW[currentPhase].event) {
-        setTimeout(() => {
+        time = setTimeout(async () => {
+          if (currentPhase === PHASES.MAFIA_SLEEP) {
+            const doctorKilled = (
+              await get(ref(db, `rooms/${roomId}/doctorKilled`))
+            ).val();
+            if (doctorKilled) {
+              set(phaseRef, PHASES.SHOW_RESULT);
+              return;
+            }
+          }
           set(phaseRef, GAME_FLOW[currentPhase].next);
         }, GAME_FLOW[currentPhase].duration);
       } else {
@@ -78,11 +88,11 @@ export const startGameloop = (roomId) => {
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
           doctorTurn(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.SHOW_RESULT) {
-          ShowResults(roomId, phaseRef, currentPhase);
+          time = ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
-          votes(roomId, phaseRef, currentPhase);
+          await votes(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.REVEAL_VOTE) {
-          revealvote(roomId, phaseRef, currentPhase);
+          time = await revealvote(roomId, phaseRef, currentPhase);
         }
       }
     }
@@ -128,7 +138,7 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
     doctorTarget: doctorTarget,
     mafiaTarget: mafiaTarget,
   });
-  setTimeout(async () => {
+  return setTimeout(async () => {
     try {
       await remove(revealTargetRef);
       await remove(doctorTargetRef);
@@ -159,7 +169,7 @@ const revealvote = async (roomId, phaseRef, currentPhase) => {
   const players = await get(playersRef);
   const continueGame = await chekIfgameOver(roomId, phaseRef, players.val());
   if (continueGame) {
-    setTimeout(async () => {
+    return setTimeout(async () => {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
     }, GAME_FLOW[currentPhase].duration);
   }
