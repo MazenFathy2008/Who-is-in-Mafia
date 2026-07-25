@@ -45,7 +45,7 @@ export const GAME_FLOW = {
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
     duration: 5000,
-    event: true,
+    event: false,
   },
   [PHASES.DISCUSSION]: {
     next: PHASES.VOTING,
@@ -60,7 +60,7 @@ export const GAME_FLOW = {
   [PHASES.REVEAL_VOTE]: {
     next: PHASES.EVERYONE_WAKE,
     duration: 5000,
-    event: true,
+    event: false,
   },
 };
 export const startGameloop = (roomId) => {
@@ -74,8 +74,9 @@ export const startGameloop = (roomId) => {
         }, GAME_FLOW[currentPhase].duration);
       } else {
         if (currentPhase === PHASES.MAFIA_WAKE) {
-          mafiaTurn(roomId);
+          mafiaTurn(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
+          doctorTurn(roomId, phaseRef, currentPhase);
         }
       }
     }
@@ -85,13 +86,19 @@ export const startGameloop = (roomId) => {
   };
 };
 
-const mafiaTurn = (roomId) => {
+const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
   const unsubMafiaTarget = onValue(mafiaTargetRef, async (snapshot) => {
     if (snapshot.exists()) {
-      const targetId = snapshot.val();
-      const targetRef = ref(db, `rooms/${roomId}/players/${targetId}/killed`);
-      await set(targetRef, true);
+      await set(phaseRef, GAME_FLOW[currentPhase].next);
+      unsubMafiaTarget();
+    }
+  });
+};
+const doctorTurn = async (roomId, phaseRef, currentPhase) => {
+  const doctorTargetRef = ref(db, `rooms/${roomId}/doctorTarget`);
+  const unsubMafiaTarget = onValue(doctorTargetRef, async (snapshot) => {
+    if (snapshot.exists()) {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
       unsubMafiaTarget();
     }
