@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
+import { PHASES } from "./utils/phases";
+import * as gameEvents from "./utils/gameEvents";
 export default function MafiaTable({ role }) {
   const [players, setPlayers] = useState(null);
   const [radius, setRadius] = useState(0);
@@ -148,7 +150,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && (
                   <div
                     className={`${
-                      phase === "vote-phase"
+                      phase === PHASES.VOTING
                         ? "bg-Im2 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-Im1 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -162,7 +164,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && role === "mafia" && (
                   <div
                     className={`${
-                      phase === "mafia-turn"
+                      phase === PHASES.MAFIA_WAKE
                         ? "bg-red-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-red-900 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -170,6 +172,11 @@ export default function MafiaTable({ role }) {
                 transition-all duration-200
                 flex items-center justify-center
                 `}
+                    onClick={() => {
+                      phase === PHASES.MAFIA_WAKE
+                        ? gameEvents.kill(roomId, shownPlayer.id)
+                        : "";
+                    }}
                   >
                     Kill
                   </div>
@@ -177,7 +184,7 @@ export default function MafiaTable({ role }) {
                 {role === "doctor" && (
                   <div
                     className={`${
-                      phase === "doctor-turn"
+                      phase === PHASES.DOCTOR_WAKE
                         ? "bg-blue-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-blue-900 cursor-not-allowed"
                     } h-10 rounded-lg 
