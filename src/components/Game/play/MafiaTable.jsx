@@ -1,4 +1,4 @@
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, get } from "firebase/database";
 import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useParams } from "react-router-dom";
@@ -11,13 +11,20 @@ export default function MafiaTable({ role }) {
   const [shownPlayer, setShownPlayer] = useState(null);
   const { roomId, userId } = useParams();
   const [voted, setVoted] = useState(true);
+  const [killed, setKilled] = useState(true);
   const [phase, setPhase] = useState("");
   useEffect(() => {
     const myVotedRef = ref(db, `rooms/${roomId}/players/${userId}/voted`);
     const unsub = onValue(myVotedRef, (snapshot) => {
       setVoted(snapshot.val());
     });
-    return unsub;
+    const amIkilledunSub = onValue(amIKilledRef, (snapshot) => {
+      setKilled(snapshot.val());
+    });
+    return () => {
+      unsub();
+      amIkilledunSub();
+    };
   }, []);
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
@@ -159,7 +166,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && (
                   <div
                     onClick={() => {
-                      phase === PHASES.VOTING && !voted
+                      phase === PHASES.VOTING && !voted && !killed
                         ? gameEvents.vote(roomId, userId, shownPlayer.id)
                         : "";
                     }}
@@ -178,7 +185,7 @@ export default function MafiaTable({ role }) {
                 {shownPlayer.id != userId && role === "mafia" && (
                   <div
                     className={`${
-                      phase === PHASES.MAFIA_WAKE
+                      phase === PHASES.MAFIA_WAKE && !killed
                         ? "bg-red-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-red-900 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -187,7 +194,7 @@ export default function MafiaTable({ role }) {
                 flex items-center justify-center
                 `}
                     onClick={() => {
-                      phase === PHASES.MAFIA_WAKE
+                      phase === PHASES.MAFIA_WAKE && !killed
                         ? gameEvents.kill(roomId, shownPlayer.id)
                         : "";
                     }}
@@ -198,12 +205,12 @@ export default function MafiaTable({ role }) {
                 {role === "doctor" && (
                   <div
                     onClick={() => {
-                      phase === PHASES.DOCTOR_WAKE
+                      phase === PHASES.DOCTOR_WAKE && !killed
                         ? gameEvents.heal(roomId, shownPlayer.id)
                         : "";
                     }}
                     className={`${
-                      phase === PHASES.DOCTOR_WAKE
+                      phase === PHASES.DOCTOR_WAKE && !killed
                         ? "bg-blue-500 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-blue-900 cursor-not-allowed"
                     } h-10 rounded-lg 
