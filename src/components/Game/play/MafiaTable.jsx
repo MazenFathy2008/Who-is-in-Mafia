@@ -183,6 +183,11 @@ export default function MafiaTable({ role }) {
                 )}
                 {role === "doctor" && (
                   <div
+                    onClick={() => {
+                      phase === PHASES.DOCTOR_WAKE
+                        ? gameEvents.heal(roomId, shownPlayer.id)
+                        : "";
+                    }}
                     className={`${
                       phase === PHASES.DOCTOR_WAKE
                         ? "bg-blue-500 cursor-pointer hover:scale-95 active:scale-90"
