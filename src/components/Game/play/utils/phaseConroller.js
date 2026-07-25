@@ -13,7 +13,7 @@ export const GAME_FLOW = {
   },
   [PHASES.EVERYONE_WAKE]: {
     next: PHASES.EVERYONE_SLEEP,
-    duration: 3000,
+    duration: 17000,
     event: false,
   },
   [PHASES.EVERYONE_SLEEP]: {
