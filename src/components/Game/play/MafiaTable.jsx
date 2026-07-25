@@ -18,7 +18,9 @@ export default function MafiaTable({ role }) {
     const unsub = onValue(myVotedRef, (snapshot) => {
       setVoted(snapshot.val());
     });
+    const amIKilledRef = ref(db, `rooms/${roomId}/players/${userId}/killed`);
     const amIkilledunSub = onValue(amIKilledRef, (snapshot) => {
+      console.log(snapshot.val());
       setKilled(snapshot.val());
     });
     return () => {
@@ -91,11 +93,13 @@ export default function MafiaTable({ role }) {
         >
           {players[id].username}
           <span className="md:text-5xl text-2xl">
-            {players[id].id == userId && role == "mafia"
-              ? "🥷"
-              : players[id].id == userId && role == "doctor"
-                ? "🧑‍⚕️"
-                : "🙎‍♂️"}
+            {players[id].killed
+              ? "☠️"
+              : players[id].id == userId && role == "mafia"
+                ? "🥷"
+                : players[id].id == userId && role == "doctor"
+                  ? "🧑‍⚕️"
+                  : "🙎‍♂️"}
           </span>
         </li>
       );
@@ -111,7 +115,7 @@ export default function MafiaTable({ role }) {
       >
         {listOfPlayers}
         <AnimatePresence>
-          {shownPlayer && (
+          {shownPlayer && !shownPlayer.killed && (
             <motion.div
               initial={{
                 scale: 0,
@@ -169,9 +173,10 @@ export default function MafiaTable({ role }) {
                       phase === PHASES.VOTING && !voted && !killed
                         ? gameEvents.vote(roomId, userId, shownPlayer.id)
                         : "";
+                      setShownPlayer(null);
                     }}
                     className={`${
-                      phase === PHASES.VOTING && !voted
+                      phase === PHASES.VOTING && !voted && !killed
                         ? "bg-Im2 cursor-pointer hover:scale-95 active:scale-90"
                         : "bg-Im1 cursor-not-allowed"
                     } h-10 rounded-lg 
@@ -197,6 +202,7 @@ export default function MafiaTable({ role }) {
                       phase === PHASES.MAFIA_WAKE && !killed
                         ? gameEvents.kill(roomId, shownPlayer.id)
                         : "";
+                      setShownPlayer(null);
                     }}
                   >
                     Kill
@@ -208,6 +214,7 @@ export default function MafiaTable({ role }) {
                       phase === PHASES.DOCTOR_WAKE && !killed
                         ? gameEvents.heal(roomId, shownPlayer.id)
                         : "";
+                      setShownPlayer(null);
                     }}
                     className={`${
                       phase === PHASES.DOCTOR_WAKE && !killed
