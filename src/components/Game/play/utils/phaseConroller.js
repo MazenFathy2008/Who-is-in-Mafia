@@ -1,4 +1,4 @@
-import { set, ref, get, onValue } from "firebase/database";
+import { set, ref, onValue } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
 export async function startGame(roomId) {
@@ -72,8 +72,28 @@ export const startGameloop = (roomId) => {
         setTimeout(() => {
           set(phaseRef, GAME_FLOW[currentPhase].next);
         }, GAME_FLOW[currentPhase].duration);
+      } else {
+        if (currentPhase === PHASES.MAFIA_WAKE) {
+          mafiaTurn(roomId);
+        } else if (currentPhase === PHASES.DOCTOR_WAKE) {
+        }
       }
     }
   });
-  return currentPhaseShot;
+  return () => {
+    currentPhaseShot();
+  };
+};
+
+const mafiaTurn = (roomId) => {
+  const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
+  const unsubMafiaTarget = onValue(mafiaTargetRef, async (snapshot) => {
+    if (snapshot.exists()) {
+      const targetId = snapshot.val();
+      const targetRef = ref(db, `rooms/${roomId}/players/${targetId}/killed`);
+      await set(targetRef, true);
+      await set(phaseRef, GAME_FLOW[currentPhase].next);
+      unsubMafiaTarget();
+    }
+  });
 };
