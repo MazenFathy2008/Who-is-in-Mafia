@@ -2,7 +2,7 @@ import { get, onValue, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../../config/firebase";
-import { PHASES } from "../../play/utils/phases";
+import * as phaseConroller from "../../play/utils/phaseConroller";
 export default function Players() {
   const [players, setPlayers] = useState(null);
   const { roomId, userId } = useParams();
@@ -53,10 +53,10 @@ export default function Players() {
       try {
         await Promise.all(Allpromises);
         await Promise.all([
-          set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE),
           set(ref(db, `rooms/${roomId}/mafiaTarget`), null),
           set(ref(db, `rooms/${roomId}/doctorTarget`), null),
         ]);
+        await phaseConroller.startGame(roomId);
         await set(roomRef, true);
       } catch {
         event.target.disabled = false;
