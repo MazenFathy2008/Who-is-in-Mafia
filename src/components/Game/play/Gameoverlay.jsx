@@ -5,9 +5,11 @@ export default function GameOverLay({ phase }) {
   const overLay = phase;
   const [shown, setShown] = useState(true);
   const [zIndex, setzIndex] = useState(100);
+  console.log(phase);
   useEffect(() => {
     if (phase.shown) {
       setShown(true);
+      setzIndex(100);
     } else {
       const shownTimer = setTimeout(() => {
         setShown(false);

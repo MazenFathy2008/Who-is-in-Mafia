@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import MafiaTable from "./MafiaTable";
 import { PHASES } from "./utils/phases";
 import GameOverLay from "./Gameoverlay";
+import * as phaseConroller from "./utils/phaseConroller";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
@@ -150,6 +151,12 @@ export default function UserInGame() {
     }
   };
   useEffect(() => {
+    if (isHost) {
+      const unsub = phaseConroller.startGameloop(roomId);
+      return unsub;
+    }
+  }, [roomId]);
+  useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(phaseRef, (snapshot) => {
       const currentPhase = snapshot.val();
@@ -164,7 +171,7 @@ export default function UserInGame() {
   }, []);
   return (
     <div className="w-full h-full overflow-hidden">
-      <GameOverLay phase={phase ||{}} />
+      <GameOverLay phase={phase || {}} />
       {phase && <MafiaTable role={role} />}
     </div>
   );
