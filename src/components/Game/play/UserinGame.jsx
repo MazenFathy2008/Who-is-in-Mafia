@@ -1,4 +1,4 @@
-import { get, onValue, ref, remove } from "firebase/database";
+import { get, onValue, ref, remove,set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
@@ -112,6 +112,8 @@ export default function UserInGame() {
                 remove(ref(db, `rooms/${roomId}/doctorTarget`)),
                 remove(ref(db, `rooms/${roomId}/mafia/`)),
                 remove(ref(db, `rooms/${roomId}/doctor/`)),
+                remove(ref(db, `rooms/${roomId}/doctorKilled/`)),
+                remove(ref(db, `rooms/${roomId}/votes/`)),
               ]);
             }
           })
@@ -152,7 +154,6 @@ export default function UserInGame() {
   useEffect(() => {
     let unsub = undefined;
     isHost().then((resolve) => {
-      console.log(resolve)
       if (resolve) {
         unsub = phaseConroller.startGameloop(roomId);
       }
@@ -163,7 +164,13 @@ export default function UserInGame() {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(phaseRef, (snapshot) => {
       const currentPhase = snapshot.val();
-      if (currentPhase && phaseData[currentPhase]) {
+      if (currentPhase === PHASES.GAME_OVER) {
+        isHost().then((resolve) => {
+          if (resolve) {
+            set(ref(db, `rooms/${roomId}/isStarted`), false);
+          }
+        });
+      } else if (currentPhase && phaseData[currentPhase]) {
         setPhase(phaseData[currentPhase]);
       }
     });

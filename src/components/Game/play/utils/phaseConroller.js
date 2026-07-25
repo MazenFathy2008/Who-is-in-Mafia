@@ -1,6 +1,7 @@
 import { set, ref, onValue, get, remove } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
+import { object } from "motion/react-client";
 export async function startGame(roomId) {
   await set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE);
 }
@@ -149,19 +150,65 @@ const votes = async (roomId, phaseRef, currentPhase) => {
   });
 };
 const revealvote = async (roomId, phaseRef, currentPhase) => {
-  const votesRef = ref(db, `rooms/${roomId}/votes`);
   const playersRef = ref(db, `rooms/${roomId}/players`);
   const players = await get(playersRef);
-  const newData = {};
-  Object.keys(players.val()).forEach((id) => {
-    newData[id] = {
-      ...players.val()[id],
-      voted: null,
-    };
+  const continueGame  = await chekIfgameOver(roomId, phaseRef, players.val());
+  if (continueGame ) {
+    setTimeout(async () => {
+      await set(phaseRef, GAME_FLOW[currentPhase].next);
+    }, GAME_FLOW[currentPhase].duration);
+  }
+};
+const chekIfgameOver = async (roomId, phaseRef, players) => {
+  const votesRef = ref(db, `rooms/${roomId}/votes`);
+  const mostVotedref = ref(db, `rooms/${roomId}/votes/votedOn`);
+  const mafiaRef = ref(db, `rooms/${roomId}/mafia/id`);
+  const mafia = (await get(mafiaRef)).val();
+  const doctorRef = ref(db, `rooms/${roomId}/doctor/id`);
+  const doctor = (await get(doctorRef)).val();
+  const votes = (await get(mostVotedref)).val();
+  const duration = 20000;
+  let maxVotes = 0;
+  let choosedOne;
+  Object.keys(votes || {}).forEach((id) => {
+    if (votes[id] > maxVotes) {
+      maxVotes = votes[id];
+      choosedOne = id;
+    }
   });
-  setTimeout(async () => {
+  if (!choosedOne) {
     await remove(votesRef);
-    await set(playersRef, newData);
-    await set(phaseRef, GAME_FLOW[currentPhase].next);
-  },GAME_FLOW[currentPhase].duration);
+    return true;
+  }
+  if (choosedOne === mafia) {
+    await set(ref(db, `rooms/${roomId}/winner`), "city");
+    setTimeout(() => {
+      set(phaseRef, PHASES.GAME_OVER);
+    }, duration);
+    return;
+  }
+  if (choosedOne === doctor) {
+    await set(ref(db, `rooms/${roomId}/doctorKilled`), true);
+  }
+  players[choosedOne].killed = true;
+  const playersRef = ref(db, `rooms/${roomId}/players`);
+  Object.keys(players).forEach((id) => {
+    players[id].voted = null;
+  });
+  const totalAlive = Object.keys(players).reduce((acc, curr) => {
+    if (!players[curr].killed) {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
+  if (totalAlive <= 2) {
+    await set(ref(db, `rooms/${roomId}/winner`), "mafia");
+    setTimeout(() => {
+      set(phaseRef, PHASES.GAME_OVER);
+    }, duration);
+    return;
+  }
+  await set(playersRef, players);
+  await remove(votesRef);
+  return true;
 };
