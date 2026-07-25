@@ -93,7 +93,6 @@ export default function UserInGame() {
     },
   };
   const [phase, setPhase] = useState(null);
-  console.log(phase);
   const isHost = async () => {
     const myRef = ref(db, `rooms/${roomId}/players/${userId}/isHost`);
     const isHost = await get(myRef);
@@ -151,10 +150,14 @@ export default function UserInGame() {
     }
   };
   useEffect(() => {
-    if (isHost) {
-      const unsub = phaseConroller.startGameloop(roomId);
-      return unsub;
-    }
+    let unsub = undefined;
+    isHost().then((resolve) => {
+      console.log(resolve)
+      if (resolve) {
+        unsub = phaseConroller.startGameloop(roomId);
+      }
+    });
+    return unsub;
   }, [roomId]);
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
