@@ -1,4 +1,4 @@
-import { set, ref, onValue } from "firebase/database";
+import { set, ref, onValue, get } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
 export async function startGame(roomId) {
@@ -45,7 +45,7 @@ export const GAME_FLOW = {
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
     duration: 5000,
-    event: false,
+    event: true,
   },
   [PHASES.DISCUSSION]: {
     next: PHASES.VOTING,
@@ -77,6 +77,8 @@ export const startGameloop = (roomId) => {
           mafiaTurn(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
           doctorTurn(roomId, phaseRef, currentPhase);
+        } else if (currentPhase === PHASES.VOTING) {
+          votes(roomId,phaseRef,currentPhase);
         }
       }
     }
@@ -97,10 +99,27 @@ const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
 };
 const doctorTurn = async (roomId, phaseRef, currentPhase) => {
   const doctorTargetRef = ref(db, `rooms/${roomId}/doctorTarget`);
-  const unsubMafiaTarget = onValue(doctorTargetRef, async (snapshot) => {
+  const unsubDoctorTarget = onValue(doctorTargetRef, async (snapshot) => {
     if (snapshot.exists()) {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
-      unsubMafiaTarget();
+      unsubDoctorTarget();
+    }
+  });
+};
+const votes = async (roomId, phaseRef, currentPhase) => {
+  const votesRef = ref(db, `rooms/${roomId}/votes`);
+  const unSubVotes = onValue(votesRef, async (snapshot) => {
+    if (!snapshot.exists()) return;
+    const votesData = snapshot.val();
+    const players = (await get(ref(db, `rooms/${roomId}/players`))).val();
+    const alivePlayers = Object.keys(players).filter(
+      (id) => !players[id].killed,
+    );
+    console.log(alivePlayers.length);
+    if (votesData.sum === alivePlayers.length) {
+      await set(phaseRef, GAME_FLOW[currentPhase].next);
+      unSubVotes();
+      console.log("true");
     }
   });
 };
