@@ -205,6 +205,7 @@ export default function UserInGame() {
                 remove(ref(db, `rooms/${roomId}/doctor/`)),
                 remove(ref(db, `rooms/${roomId}/doctorKilled/`)),
                 remove(ref(db, `rooms/${roomId}/votes/`)),
+                remove(ref(db, `rooms/${roomId}/reveal-target`)),
               ]);
               const playersRef = ref(db, `rooms/${roomId}/players`);
               const snapshot = await get(playersRef);
@@ -310,7 +311,7 @@ export default function UserInGame() {
         const SHOW_RESULT = [];
         phaseData[PHASES.SHOW_RESULT].stages[0].text = `Mafia killed ${killed}`;
         SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[0]);
-        if (!doctorKilled && healed ) {
+        if (!doctorKilled && healed) {
           phaseData[PHASES.SHOW_RESULT].stages[1].text =
             `doctor healed ${healed}`;
           SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[1]);

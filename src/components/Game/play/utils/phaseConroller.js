@@ -140,6 +140,10 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
       mafiaTarget: mafiaTarget,
     });
   }
+  const continueGame = await chekIfgameOverAfterResults(roomId, phaseRef);
+  if (!continueGame) {
+    return;
+  }
   return setTimeout(async () => {
     try {
       await remove(doctorTargetRef);
@@ -149,6 +153,22 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
       set(phaseRef, currentPhase);
     }
   }, GAME_FLOW[currentPhase].duration);
+};
+const chekIfgameOverAfterResults = async (roomId, phaseRef) => {
+  const playersRef = ref(db, `rooms/${roomId}/players`);
+  const players = (await get(playersRef)).val();
+  const alivePlayers = Object.keys(players).reduce((acc, id) => {
+    if (players[id].killed) {
+      return acc;
+    } else {
+      return acc + 1;
+    }
+  }, 0);
+  if (alivePlayers <= 2) {
+    set(phaseRef, PHASES.GAME_OVER);
+    return false;
+  }
+  return true;
 };
 const votes = async (roomId, phaseRef, currentPhase) => {
   const votesRef = ref(db, `rooms/${roomId}/votes`);
