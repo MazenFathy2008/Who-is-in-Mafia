@@ -1,14 +1,20 @@
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 export default function GameOverLay({ phase }) {
+  const currentId = useRef(phase.id);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shown, setShown] = useState(true);
   const overLay = phase?.stages?.[currentIndex] || {};
   const [zIndex, setzIndex] = useState(100);
   useEffect(() => {
+    console.log(currentId.current);
+    if (currentId.current !== phase.id) {
+      setCurrentIndex(0);
+      currentId.current = phase.id;
+    }
     if (phase?.stages) {
-      console.log("IKG");
+      console.log(overLay);
       if (currentIndex + 1 < phase.stages.length) {
         console.log("entered");
         const t = setTimeout(() => {
@@ -23,7 +29,7 @@ export default function GameOverLay({ phase }) {
         };
       }
     }
-  }, [currentIndex,phase]);
+  }, [currentIndex, phase]);
   useEffect(() => {
     setShown(true);
     setzIndex(100);
@@ -40,7 +46,8 @@ export default function GameOverLay({ phase }) {
         clearTimeout(t);
       };
     }
-  }, [phase]);
+  }, [currentIndex, phase]);
+
   return createPortal(
     <div
       style={{

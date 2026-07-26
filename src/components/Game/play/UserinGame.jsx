@@ -6,13 +6,14 @@ import MafiaTable from "./MafiaTable";
 import { PHASES } from "./utils/phases";
 import GameOverLay from "./Gameoverlay";
 import * as phaseConroller from "./utils/phaseConroller";
-import { getTarget, kill } from "./utils/gameEvents";
+import { getTarget } from "./utils/gameEvents";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
   const phaseData = {
     [PHASES.SHOW_ROLE]: {
+      id: PHASES.SHOW_ROLE,
       stages: [
         {
           text: role,
@@ -29,6 +30,7 @@ export default function UserInGame() {
     },
 
     [PHASES.EVERYONE_WAKE]: {
+      id: PHASES.EVERYONE_WAKE,
       stages: [
         {
           text: "Everyone Wake Up",
@@ -40,6 +42,7 @@ export default function UserInGame() {
     },
 
     [PHASES.EVERYONE_SLEEP]: {
+      id: PHASES.EVERYONE_SLEEP,
       stages: [
         {
           text: "Everyone Sleep",
@@ -51,6 +54,7 @@ export default function UserInGame() {
     },
 
     [PHASES.MAFIA_WAKE]: {
+      id: PHASES.MAFIA_WAKE,
       stages: [
         {
           text: "Mafia Wake Up",
@@ -62,6 +66,7 @@ export default function UserInGame() {
     },
 
     [PHASES.MAFIA_SLEEP]: {
+      id: PHASES.MAFIA_SLEEP,
       stages: [
         {
           text: "Mafia Sleep",
@@ -73,6 +78,7 @@ export default function UserInGame() {
     },
 
     [PHASES.DOCTOR_WAKE]: {
+      id: PHASES.DOCTOR_WAKE,
       stages: [
         {
           text: "Doctor Wake Up",
@@ -84,6 +90,7 @@ export default function UserInGame() {
     },
 
     [PHASES.DOCTOR_SLEEP]: {
+      id: PHASES.DOCTOR_SLEEP,
       stages: [
         {
           text: "Doctor Sleep",
@@ -95,6 +102,7 @@ export default function UserInGame() {
     },
 
     [PHASES.SHOW_RESULT]: {
+      id:PHASES.SHOW_RESULT,
       stages: [
         {
           text: "Mafia chose...",
@@ -118,17 +126,19 @@ export default function UserInGame() {
     },
 
     [PHASES.DISCUSSION]: {
+      id: PHASES.DISCUSSION,
       stages: [
         {
           text: "Discussion",
           color: "text-font",
           shown: false,
-          duration: 30000,
+          duration: 3000,
         },
       ],
     },
 
     [PHASES.VOTING]: {
+      id: PHASES.VOTING,
       stages: [
         {
           text: "Voting Time",
@@ -140,6 +150,7 @@ export default function UserInGame() {
     },
 
     [PHASES.REVEAL_VOTE]: {
+      id: PHASES.REVEAL_VOTE,
       stages: [
         {
           text: "You voted for...",
@@ -157,6 +168,7 @@ export default function UserInGame() {
     },
 
     [PHASES.GAME_OVER]: {
+      id: PHASES.GAME_OVER,
       stages: [
         {
           text: "Game Over",
@@ -175,6 +187,7 @@ export default function UserInGame() {
     const isHost = await get(myRef);
     return isHost.val();
   };
+
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
@@ -260,7 +273,7 @@ export default function UserInGame() {
       if (currentPhase === PHASES.SHOW_RESULT) {
         unsubTarget.current = getTarget(roomId, setTarget);
       }
-      if (currentPhase === PHASES.GAME_OVER && !unsubTarget.current) {
+      if (currentPhase === PHASES.GAME_OVER) {
         isHost().then((resolve) => {
           if (resolve) {
             set(ref(db, `rooms/${roomId}/isStarted`), false);
@@ -285,13 +298,15 @@ export default function UserInGame() {
         db,
         `rooms/${roomId}/players/${target.doctorTarget}/username`,
       );
+      const doctorKilledRef = ref(db, `rooms/${roomId}/doctorKilled`);
       const data = async () => {
         const killed = (await get(mafiaTargetRef)).val();
         const healed = (await get(doctorTargetRef)).val();
-        return [killed, healed];
+        const doctorKilled = (await get(doctorKilledRef)).val();
+        return [killed, healed, doctorKilled];
       };
       data()
-        .then(([killed, healed]) => {
+        .then(([killed, healed, doctorKilled]) => {
           phaseData[PHASES.SHOW_RESULT].stages[0].text =
             `Mafia chose ${killed}`;
           phaseData[PHASES.SHOW_RESULT].stages[1].text =
@@ -300,15 +315,23 @@ export default function UserInGame() {
             phaseData[PHASES.SHOW_RESULT].stages[2].text =
               `No one was killed ...`;
           } else {
-            phaseData[PHASES.SHOW_RESULT].stages[2].text =
-              `${killed} is killed`;
+            phaseData[PHASES.SHOW_RESULT].stages[2].color = "text-Im1";
+            if (doctorKilled) {
+              phaseData[PHASES.SHOW_RESULT].stages[2].text =
+                `${killed} (doctor) is killed`;
+            } else {
+              phaseData[PHASES.SHOW_RESULT].stages[2].text =
+                `${killed} is killed`;
+            }
           }
         })
         .then(() => {
           setPhase(phaseData[PHASES.SHOW_RESULT]);
         });
     }
-    return unsubTarget.current;
+    return () => {
+      unsubTarget.current && unsubTarget.current();
+    };
   }, [target]);
   return (
     <div className="w-full h-full overflow-hidden">
