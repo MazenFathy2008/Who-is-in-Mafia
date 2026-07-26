@@ -13,12 +13,12 @@ export const GAME_FLOW = {
   },
   [PHASES.EVERYONE_WAKE]: {
     next: PHASES.EVERYONE_SLEEP,
-    duration: 17000,
+    duration: 15000,
     event: false,
   },
   [PHASES.EVERYONE_SLEEP]: {
     next: PHASES.MAFIA_WAKE,
-    duration: 3000,
+    duration: 10000,
     event: false,
   },
   [PHASES.MAFIA_WAKE]: {
@@ -28,7 +28,7 @@ export const GAME_FLOW = {
   },
   [PHASES.MAFIA_SLEEP]: {
     next: PHASES.DOCTOR_WAKE,
-    duration: 3000,
+    duration: 4000,
     event: false,
   },
   [PHASES.DOCTOR_WAKE]: {
@@ -38,12 +38,12 @@ export const GAME_FLOW = {
   },
   [PHASES.DOCTOR_SLEEP]: {
     next: PHASES.SHOW_RESULT,
-    duration: 3000,
+    duration: 4000,
     event: false,
   },
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
-    duration: 20000,
+    duration: 23000,
     event: true,
   },
   [PHASES.DISCUSSION]: {
@@ -58,7 +58,7 @@ export const GAME_FLOW = {
   },
   [PHASES.REVEAL_VOTE]: {
     next: PHASES.EVERYONE_WAKE,
-    duration: 25000,
+    duration: 18000,
     event: true,
   },
 };

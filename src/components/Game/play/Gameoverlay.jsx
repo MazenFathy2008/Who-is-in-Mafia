@@ -2,24 +2,42 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 export default function GameOverLay({ phase }) {
-  const overLay = phase;
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [shown, setShown] = useState(true);
+  const overLay = phase?.stages?.[currentIndex] || {};
   const [zIndex, setzIndex] = useState(100);
-  console.log(phase);
   useEffect(() => {
-    if (phase.shown) {
-      setShown(true);
-      setzIndex(100);
-    } else {
-      const shownTimer = setTimeout(() => {
-        setShown(false);
-      }, 5000);
-      const zIndexTimer = setTimeout(() => {
-        setzIndex(-1);
-      }, 6500);
+    if (phase?.stages) {
+      console.log("IKG");
+      if (currentIndex + 1 < phase.stages.length) {
+        console.log("entered");
+        const t = setTimeout(() => {
+          setCurrentIndex((prev) => {
+            const next = prev + 1;
+            setShown(phase.stages[next].shown);
+            return next;
+          });
+        }, phase?.stages?.[currentIndex].duration);
+        return () => {
+          clearTimeout(t);
+        };
+      }
+    }
+  }, [currentIndex,phase]);
+  useEffect(() => {
+    setShown(true);
+    setzIndex(100);
+    if (!phase?.stages?.[currentIndex]) return;
+    if (!phase?.stages?.[currentIndex].shown) {
+      const t = setTimeout(() => {
+        setShown(phase?.stages?.[currentIndex].shown);
+        setTimeout(() => {
+          setzIndex(-1);
+        }, 1500);
+      }, overLay.duration);
+
       return () => {
-        clearTimeout(shownTimer);
-        clearTimeout(zIndexTimer);
+        clearTimeout(t);
       };
     }
   }, [phase]);
