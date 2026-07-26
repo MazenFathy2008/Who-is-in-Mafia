@@ -10,6 +10,7 @@ import { getTarget } from "./utils/gameEvents";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
+  const [doctorKilled, setDoctorKilled] = useState(false);
   const navigate = useNavigate();
   const phaseData = {
     [PHASES.SHOW_ROLE]: {
@@ -102,22 +103,22 @@ export default function UserInGame() {
     },
 
     [PHASES.SHOW_RESULT]: {
-      id:PHASES.SHOW_RESULT,
+      id: PHASES.SHOW_RESULT,
       stages: [
         {
-          text: "Mafia chose...",
+          text: "",
           color: "text-Im1",
           shown: true,
           duration: 6000,
         },
         {
-          text: "Doctor saved...",
+          text: "",
           color: "text-blue-500",
           shown: true,
           duration: 6000,
         },
         {
-          text: "Nobody died",
+          text: "",
           color: "text-font",
           shown: true,
           duration: 6000,
@@ -305,29 +306,35 @@ export default function UserInGame() {
         const doctorKilled = (await get(doctorKilledRef)).val();
         return [killed, healed, doctorKilled];
       };
-      data()
-        .then(([killed, healed, doctorKilled]) => {
-          phaseData[PHASES.SHOW_RESULT].stages[0].text =
-            `Mafia chose ${killed}`;
+      data().then(([killed, healed, doctorKilledNow]) => {
+        const SHOW_RESULT = [];
+        phaseData[PHASES.SHOW_RESULT].stages[0].text = `Mafia killed ${killed}`;
+        SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[0]);
+        if (!doctorKilled && healed ) {
           phaseData[PHASES.SHOW_RESULT].stages[1].text =
             `doctor healed ${healed}`;
-          if (target.mafiaTarget === target.doctorTarget) {
+          SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[1]);
+        }
+        if (target.mafiaTarget === target.doctorTarget) {
+          phaseData[PHASES.SHOW_RESULT].stages[2].text =
+            `No one was killed ...`;
+        } else {
+          phaseData[PHASES.SHOW_RESULT].stages[2].color = "text-Im1";
+          if (doctorKilledNow && !doctorKilled) {
             phaseData[PHASES.SHOW_RESULT].stages[2].text =
-              `No one was killed ...`;
+              `${killed} (doctor) is killed`;
+            setTimeout(() => {
+              setDoctorKilled(true);
+            }, 500);
           } else {
-            phaseData[PHASES.SHOW_RESULT].stages[2].color = "text-Im1";
-            if (doctorKilled) {
-              phaseData[PHASES.SHOW_RESULT].stages[2].text =
-                `${killed} (doctor) is killed`;
-            } else {
-              phaseData[PHASES.SHOW_RESULT].stages[2].text =
-                `${killed} is killed`;
-            }
+            phaseData[PHASES.SHOW_RESULT].stages[2].text =
+              `${killed} is killed`;
           }
-        })
-        .then(() => {
-          setPhase(phaseData[PHASES.SHOW_RESULT]);
-        });
+        }
+        SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[2]);
+        console.log(SHOW_RESULT);
+        setPhase({ id: [PHASES.SHOW_RESULT], stages: SHOW_RESULT });
+      });
     }
     return () => {
       unsubTarget.current && unsubTarget.current();

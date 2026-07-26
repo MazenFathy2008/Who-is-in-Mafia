@@ -134,9 +134,9 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
     }
     await set(ref(db, `rooms/${roomId}/players/${mafiaTarget}/killed`), true);
   }
-  if (doctorTarget && mafiaTarget) {
-    set(revealTargetRef, {
-      doctorTarget: doctorTarget,
+  if (mafiaTarget) {
+    await set(revealTargetRef, {
+      doctorTarget: doctorTarget || null,
       mafiaTarget: mafiaTarget,
     });
   }
