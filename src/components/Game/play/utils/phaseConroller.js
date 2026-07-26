@@ -183,7 +183,9 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
   const doctorRef = ref(db, `rooms/${roomId}/doctor/id`);
   const doctor = (await get(doctorRef)).val();
   const votes = (await get(mostVotedref)).val();
+  const revealTargetRef = ref(db, `rooms/${roomId}/reveal-target`);
   const duration = 20000;
+  await remove(revealTargetRef);
   let maxVotes = 0;
   let choosedOne;
   Object.keys(votes || {}).forEach((id) => {
