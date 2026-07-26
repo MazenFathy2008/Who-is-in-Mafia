@@ -1,11 +1,12 @@
 import { get, onValue, ref, remove, set } from "firebase/database";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import MafiaTable from "./MafiaTable";
 import { PHASES } from "./utils/phases";
 import GameOverLay from "./Gameoverlay";
 import * as phaseConroller from "./utils/phaseConroller";
+import { getTarget, kill } from "./utils/gameEvents";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
@@ -108,7 +109,7 @@ export default function UserInGame() {
           duration: 6000,
         },
         {
-          text: "Nobody died", 
+          text: "Nobody died",
           color: "text-font",
           shown: true,
           duration: 6000,
@@ -167,12 +168,13 @@ export default function UserInGame() {
     },
   };
   const [phase, setPhase] = useState(null);
+  const [target, setTarget] = useState(null);
+  const unsubTarget = useRef(undefined);
   const isHost = async () => {
     const myRef = ref(db, `rooms/${roomId}/players/${userId}/isHost`);
     const isHost = await get(myRef);
     return isHost.val();
   };
-
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
@@ -250,11 +252,15 @@ export default function UserInGame() {
     });
     return unsub;
   }, [roomId]);
+
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
     const unsub = onValue(phaseRef, (snapshot) => {
       const currentPhase = snapshot.val();
-      if (currentPhase === PHASES.GAME_OVER) {
+      if (currentPhase === PHASES.SHOW_RESULT) {
+        unsubTarget.current = getTarget(roomId, setTarget);
+      }
+      if (currentPhase === PHASES.GAME_OVER && !unsubTarget.current) {
         isHost().then((resolve) => {
           if (resolve) {
             set(ref(db, `rooms/${roomId}/isStarted`), false);
@@ -269,6 +275,41 @@ export default function UserInGame() {
   useEffect(() => {
     getRole();
   }, []);
+  useEffect(() => {
+    if (target) {
+      const mafiaTargetRef = ref(
+        db,
+        `rooms/${roomId}/players/${target.mafiaTarget}/username`,
+      );
+      const doctorTargetRef = ref(
+        db,
+        `rooms/${roomId}/players/${target.doctorTarget}/username`,
+      );
+      const data = async () => {
+        const killed = (await get(mafiaTargetRef)).val();
+        const healed = (await get(doctorTargetRef)).val();
+        return [killed, healed];
+      };
+      data()
+        .then(([killed, healed]) => {
+          phaseData[PHASES.SHOW_RESULT].stages[0].text =
+            `Mafia chose ${killed}`;
+          phaseData[PHASES.SHOW_RESULT].stages[1].text =
+            `doctor healed ${healed}`;
+          if (target.mafiaTarget === target.doctorTarget) {
+            phaseData[PHASES.SHOW_RESULT].stages[2].text =
+              `No one was killed ...`;
+          } else {
+            phaseData[PHASES.SHOW_RESULT].stages[2].text =
+              `${killed} is killed`;
+          }
+        })
+        .then(() => {
+          setPhase(phaseData[PHASES.SHOW_RESULT]);
+        });
+    }
+    return unsubTarget.current;
+  }, [target]);
   return (
     <div className="w-full h-full overflow-hidden">
       <GameOverLay phase={phase || {}} />

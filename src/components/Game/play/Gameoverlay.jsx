@@ -70,7 +70,9 @@ export default function GameOverLay({ phase }) {
               }}
               className={`
               ${overLay.color} z-100 font-Jungle absolute top-1/2 
-                  left-1/2 text-8xl -translate-1/2 select-none`}
+                  left-1/2 text-8xl -translate-1/2 select-none
+                  md:whitespace-nowrap
+                  `}
             >
               {overLay.text}
             </motion.p>

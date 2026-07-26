@@ -1,4 +1,4 @@
-import { ref, set, get } from "firebase/database";
+import { ref, set, get, onValue } from "firebase/database";
 import { db } from "../../../../config/firebase";
 export const kill = async (roomId, playerId) => {
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
@@ -23,4 +23,14 @@ export const vote = async (roomId, myId, playerId) => {
     sum,
   });
   await set(myRef, true);
+};
+export const getTarget = (roomId, setTarget) => {
+  let data;
+  const TargetRef = ref(db, `rooms/${roomId}/reveal-target`);
+  const unsub = onValue(TargetRef, (snapshot) => {
+    if (snapshot.val()) {
+      setTarget(snapshot.val());
+    }
+  });
+  return unsub
 };

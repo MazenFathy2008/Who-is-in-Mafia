@@ -43,7 +43,7 @@ export const GAME_FLOW = {
   },
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
-    duration: 23000,
+    duration: 25000,
     event: true,
   },
   [PHASES.DISCUSSION]: {
@@ -134,13 +134,14 @@ const ShowResults = async (roomId, phaseRef, currentPhase) => {
     }
     await set(ref(db, `rooms/${roomId}/players/${mafiaTarget}/killed`), true);
   }
-  set(revealTargetRef, {
-    doctorTarget: doctorTarget,
-    mafiaTarget: mafiaTarget,
-  });
+  if (doctorTarget && mafiaTarget) {
+    set(revealTargetRef, {
+      doctorTarget: doctorTarget,
+      mafiaTarget: mafiaTarget,
+    });
+  }
   return setTimeout(async () => {
     try {
-      await remove(revealTargetRef);
       await remove(doctorTargetRef);
       await remove(mafiaTargetRef);
       await set(phaseRef, GAME_FLOW[currentPhase].next);
