@@ -270,6 +270,7 @@ export default function UserInGame() {
 
   useEffect(() => {
     const phaseRef = ref(db, `rooms/${roomId}/phase`);
+    let clearTime;
     const unsub = onValue(phaseRef, (snapshot) => {
       const currentPhase = snapshot.val();
       if (currentPhase === PHASES.SHOW_RESULT) {
@@ -278,14 +279,18 @@ export default function UserInGame() {
       if (currentPhase === PHASES.GAME_OVER) {
         isHost().then((resolve) => {
           if (resolve) {
-            set(ref(db, `rooms/${roomId}/isStarted`), false);
+            clearTime = setTimeout(() => {
+              set(ref(db, `rooms/${roomId}/isStarted`), false);
+            }, phaseData[PHASES.GAME_OVER].stages[0].duration);
           }
         });
-      } else if (currentPhase && phaseData[currentPhase]) {
-        setPhase(phaseData[currentPhase]);
       }
+      setPhase(phaseData[currentPhase]);
     });
-    return unsub;
+    return () => {
+      unsub();
+      clearTimeout(clearTime);
+    };
   }, [role]);
   useEffect(() => {
     getRole();
