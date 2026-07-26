@@ -7,16 +7,20 @@ export default function GameOverLay({ phase }) {
   const [shown, setShown] = useState(true);
   const overLay = phase?.stages?.[currentIndex] || {};
   const [zIndex, setzIndex] = useState(100);
+  const [isFirst, setIsfirst] = useState(true);
   useEffect(() => {
-    console.log(currentId.current);
     if (currentId.current !== phase.id) {
       setCurrentIndex(0);
       currentId.current = phase.id;
     }
     if (phase?.stages) {
-      console.log(overLay);
+      let t2;
+      if (isFirst) {
+        t2 = setTimeout(() => {
+          setIsfirst(false);
+        }, 1000);
+      }
       if (currentIndex + 1 < phase.stages.length) {
-        console.log("entered");
         const t = setTimeout(() => {
           setCurrentIndex((prev) => {
             const next = prev + 1;
@@ -25,6 +29,7 @@ export default function GameOverLay({ phase }) {
           });
         }, phase?.stages?.[currentIndex].duration);
         return () => {
+          clearTimeout(t2);
           clearTimeout(t);
         };
       }
@@ -51,6 +56,7 @@ export default function GameOverLay({ phase }) {
   return createPortal(
     <div
       style={{
+        backgroundColor: isFirst && "black",
         zIndex: zIndex,
       }}
       className="w-screen h-screen top-0 fixed"
@@ -85,19 +91,31 @@ export default function GameOverLay({ phase }) {
             </motion.p>
             <motion.div
               className="bg-black absolute z-99 h-1/2 w-full"
+              initial={{
+                y: "-100%",
+              }}
+              animate={{
+                y: 0,
+              }}
               exit={{
                 y: "-100%",
               }}
               transition={{
-                duration: 1.5,
+                duration: 1,
               }}
             ></motion.div>
             <motion.div
+              initial={{
+                y: "100%",
+              }}
+              animate={{
+                y: 0,
+              }}
               exit={{
                 y: "100%",
               }}
               transition={{
-                duration: 1.5,
+                duration: 1,
               }}
               className="bg-black absolute bottom-0 z-99 h-1/2 w-full"
             ></motion.div>
