@@ -25,12 +25,32 @@ export const vote = async (roomId, myId, playerId) => {
   await set(myRef, true);
 };
 export const getTarget = (roomId, setTarget) => {
-  let data;
   const TargetRef = ref(db, `rooms/${roomId}/reveal-target`);
   const unsub = onValue(TargetRef, (snapshot) => {
     if (snapshot.val()) {
       setTarget(snapshot.val());
     }
   });
-  return unsub
+  return unsub;
+};
+export const getVotes = (roomId, setVoteResult) => {
+  const eliminatedRef = ref(db, `rooms/${roomId}/eliminatedPlayer`);
+  const unSub = onValue(eliminatedRef, async (snapshot) => {
+    if (snapshot.exists()) {
+      let data;
+      if (snapshot.val() !== "tie") {
+        data = (
+          await get(
+            ref(db, `rooms/${roomId}/players/${snapshot.val().id}/username`),
+          )
+        ).val();
+      }
+      setVoteResult(
+        snapshot.val() === "tie"
+          ? "tie"
+          : { username: data, ...snapshot.val() },
+      );
+    }
+  });
+  return unSub;
 };

@@ -6,7 +6,7 @@ import MafiaTable from "./MafiaTable";
 import { PHASES } from "./utils/phases";
 import GameOverLay from "./Gameoverlay";
 import * as phaseConroller from "./utils/phaseConroller";
-import { getTarget } from "./utils/gameEvents";
+import * as gameEvents from "./utils/gameEvents";
 export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
@@ -154,7 +154,7 @@ export default function UserInGame() {
       id: PHASES.REVEAL_VOTE,
       stages: [
         {
-          text: "You voted for...",
+          text: "The person who ",
           color: "text-font",
           shown: true,
           duration: 7000,
@@ -183,6 +183,9 @@ export default function UserInGame() {
   const [phase, setPhase] = useState(null);
   const [target, setTarget] = useState(null);
   const unsubTarget = useRef(undefined);
+  const [votedOn, setVotedOn] = useState(null);
+  const unsubVotedOn = useRef(undefined);
+
   const isHost = async () => {
     const myRef = ref(db, `rooms/${roomId}/players/${userId}/isHost`);
     const isHost = await get(myRef);
@@ -274,9 +277,10 @@ export default function UserInGame() {
     const unsub = onValue(phaseRef, (snapshot) => {
       const currentPhase = snapshot.val();
       if (currentPhase === PHASES.SHOW_RESULT) {
-        unsubTarget.current = getTarget(roomId, setTarget);
-      }
-      if (currentPhase === PHASES.GAME_OVER) {
+        unsubTarget.current = gameEvents.getTarget(roomId, setTarget);
+      } else if (currentPhase === PHASES.REVEAL_VOTE) {
+        unsubVotedOn.current = gameEvents.getVotes(roomId, setVotedOn);
+      } else if (currentPhase === PHASES.GAME_OVER) {
         isHost().then((resolve) => {
           if (resolve) {
             clearTime = setTimeout(() => {
@@ -346,6 +350,38 @@ export default function UserInGame() {
       unsubTarget.current && unsubTarget.current();
     };
   }, [target]);
+  useEffect(() => {
+    if (votedOn) {
+      console.log(votedOn);
+      const currentRevealtemp = phaseData[PHASES.REVEAL_VOTE].stages;
+      const REVEAL_VOTE = [];
+      if (votedOn === "tie") {
+        currentRevealtemp[0].text = "tie";
+        currentRevealtemp[1].text = "No one Was ejected";
+        REVEAL_VOTE.push(currentRevealtemp[0]);
+        REVEAL_VOTE.push(currentRevealtemp[1]);
+      } else {
+        currentRevealtemp[0].text = `${votedOn.username} was ejected by ${votedOn.votes}`;
+        REVEAL_VOTE.push(currentRevealtemp[0]);
+        if (votedOn.isMafia) {
+          currentRevealtemp[1].text = "Mafia Was ejected";
+          currentRevealtemp[1].color = "text-blue-500";
+        } else if (votedOn.isDoctor) {
+          currentRevealtemp[1].text = "Doctor Was ejected";
+          currentRevealtemp[1].color = "text-Im1";
+        } else {
+          currentRevealtemp[1].text = "Citizen Was ejected";
+          currentRevealtemp[1].color = "text-font";
+        }
+        REVEAL_VOTE.push(currentRevealtemp[1]);
+      }
+      console.log(REVEAL_VOTE);
+      setPhase({ id: PHASES.REVEAL_VOTE, stages: REVEAL_VOTE });
+    }
+    return () => {
+      unsubVotedOn.current && unsubVotedOn.current();
+    };
+  }, [votedOn]);
   return (
     <div className="w-full h-full overflow-hidden">
       <GameOverLay phase={phase || {}} />

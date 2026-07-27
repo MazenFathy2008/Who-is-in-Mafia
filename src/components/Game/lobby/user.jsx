@@ -1,8 +1,6 @@
 import { onValue, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createPortal } from "react-dom";
-import { motion } from "motion/react";
 import Invitations from "./sections/invetation";
 import { db } from "../../../config/firebase";
 import Players from "./sections/Players";

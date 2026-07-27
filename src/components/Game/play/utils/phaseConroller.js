@@ -1,6 +1,7 @@
 import { set, ref, onValue, get, remove } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
+import { vote } from "./gameEvents";
 export async function startGame(roomId) {
   await set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE);
 }
@@ -206,12 +207,15 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
   const revealTargetRef = ref(db, `rooms/${roomId}/reveal-target`);
   const duration = 20000;
   await remove(revealTargetRef);
+  await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   let maxVotes = 0;
   let choosedOne;
   Object.keys(votes || {}).forEach((id) => {
     if (votes[id] > maxVotes) {
       maxVotes = votes[id];
       choosedOne = id;
+    } else if (votes[id] === maxVotes) {
+      choosedOne = false;
     }
   });
   if (!choosedOne) {
@@ -229,6 +233,17 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
     await set(ref(db, `rooms/${roomId}/doctorKilled`), true);
   }
   players[choosedOne].killed = true;
+  await set(
+    ref(db, `rooms/${roomId}/eliminatedPlayer`),
+    choosedOne
+      ? {
+          id: choosedOne,
+          votes: maxVotes,
+          isMafia: choosedOne === mafia,
+          isDoctor: choosedOne === doctor,
+        }
+      : "tie",
+  );
   const playersRef = ref(db, `rooms/${roomId}/players`);
   Object.keys(players).forEach((id) => {
     players[id].voted = null;
