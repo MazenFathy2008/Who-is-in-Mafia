@@ -104,6 +104,7 @@ export const startGameloop = (roomId) => {
 };
 
 const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
+  await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
   const unsubMafiaTarget = onValue(mafiaTargetRef, async (snapshot) => {
     if (snapshot.exists()) {
@@ -207,7 +208,6 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
   const revealTargetRef = ref(db, `rooms/${roomId}/reveal-target`);
   const duration = 20000;
   await remove(revealTargetRef);
-  await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   let maxVotes = 0;
   let choosedOne;
   Object.keys(votes || {}).forEach((id) => {
@@ -218,21 +218,6 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
       choosedOne = false;
     }
   });
-  if (!choosedOne) {
-    await remove(votesRef);
-    return true;
-  }
-  if (choosedOne === mafia) {
-    await set(ref(db, `rooms/${roomId}/winner`), "city");
-    setTimeout(() => {
-      set(phaseRef, PHASES.GAME_OVER);
-    }, duration);
-    return;
-  }
-  if (choosedOne === doctor) {
-    await set(ref(db, `rooms/${roomId}/doctorKilled`), true);
-  }
-  players[choosedOne].killed = true;
   await set(
     ref(db, `rooms/${roomId}/eliminatedPlayer`),
     choosedOne
@@ -244,7 +229,28 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
         }
       : "tie",
   );
+
+  if (choosedOne === mafia) {
+    await set(ref(db, `rooms/${roomId}/winner`), "city");
+    setTimeout(() => {
+      set(phaseRef, PHASES.GAME_OVER);
+    }, duration);
+    return;
+  }
+  if (choosedOne === doctor) {
+    await set(ref(db, `rooms/${roomId}/doctorKilled`), true);
+  }
   const playersRef = ref(db, `rooms/${roomId}/players`);
+
+  if (!choosedOne) {
+    await remove(votesRef);
+    Object.keys(players).forEach((id) => {
+      players[id].voted = null;
+    });
+    await set(playersRef, players);
+    return true;
+  }
+  players[choosedOne].killed = true;
   Object.keys(players).forEach((id) => {
     players[id].voted = null;
   });
