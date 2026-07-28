@@ -14,7 +14,7 @@ export default function Lobby() {
       shadow-md
     shadow-black
       w-full
-      h-full
+      h-90/100
       md:w-90/100
       md:h-137
     bg-subBg/70 backdrop-blur-lg
