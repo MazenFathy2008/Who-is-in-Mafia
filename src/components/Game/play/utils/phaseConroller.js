@@ -8,6 +8,16 @@ const clearTimer = async (roomId) => {
   await remove(ref(db, `rooms/${roomId}/timer`));
   return;
 };
+const setTimer = async (roomId, phase) => {
+  const timerRef = ref(db, `rooms/${roomId}/timer`);
+  const isThereTimer = (await get(timerRef)).exists();
+  if (!isThereTimer) {
+    await set(timerRef, {
+      startedAt: Date.now(),
+      duration: GAME_FLOW[phase].duration,
+    });
+  }
+};
 export const GAME_FLOW = {
   [PHASES.SHOW_ROLE]: {
     next: PHASES.EVERYONE_WAKE,
@@ -53,13 +63,15 @@ export const GAME_FLOW = {
   },
   [PHASES.DISCUSSION]: {
     next: PHASES.VOTING,
-    duration: 30000,
+    duration: 120000,
     event: false,
+    setTimer,
   },
   [PHASES.VOTING]: {
     next: PHASES.REVEAL_VOTE,
     duration: 60000,
     event: true,
+    clearTimer
   },
   [PHASES.REVEAL_VOTE]: {
     next: PHASES.EVERYONE_WAKE,
@@ -78,6 +90,7 @@ export const startGameloop = (roomId) => {
       GAME_FLOW[currentPhase].clearTimer &&
         GAME_FLOW[currentPhase].clearTimer(roomId);
       if (!GAME_FLOW[currentPhase].event) {
+        GAME_FLOW[currentPhase].setTimer?.(roomId, currentPhase);
         time = setTimeout(async () => {
           if (currentPhase === PHASES.MAFIA_SLEEP) {
             const doctorKilled = (
@@ -113,16 +126,7 @@ export const startGameloop = (roomId) => {
     currentPhaseShot();
   };
 };
-const setTimer = async (roomId, phase) => {
-  const timerRef = ref(db, `rooms/${roomId}/timer`);
-  const isThereTimer = (await get(timerRef)).exists();
-  if (!isThereTimer) {
-    await set(timerRef, {
-      startedAt: Date.now(),
-      duration: GAME_FLOW[phase].duration,
-    });
-  }
-};
+
 const calcRemaining = async (roomId) => {
   const timerRef = ref(db, `rooms/${roomId}/timer`);
   const timer = (await get(timerRef)).val();
