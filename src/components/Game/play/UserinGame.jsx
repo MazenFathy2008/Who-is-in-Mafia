@@ -11,6 +11,8 @@ export default function UserInGame() {
   const { roomId, userId } = useParams();
   const [role, setRole] = useState(null);
   const [doctorKilled, setDoctorKilled] = useState(false);
+  const [timer, setTimer] = useState(null);
+  const [remaining, setRemaining] = useState(0);
   const navigate = useNavigate();
   const phaseData = {
     [PHASES.SHOW_ROLE]: {
@@ -414,13 +416,33 @@ export default function UserInGame() {
       }
       GAME_OVER.stages[2].text = `${winner.mafia} was in Mafia`;
       GAME_OVER.stages[3].text = `${winner.doctor} was The doctor`;
-      setPhase(GAME_OVER)
+      setPhase(GAME_OVER);
     }
   }, [winner]);
+  useEffect(() => {
+    const unsubTimer = onValue(ref(db, `rooms/${roomId}/timer`), (snapshot) => {
+      setTimer(snapshot.val());
+    });
+    return unsubTimer;
+  }, []);
+  useEffect(() => {
+    if (!timer) return;
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - timer.startedAt;
+      const remaining = Math.max(
+        0,
+        Math.ceil((timer.duration - elapsed) / 1000),
+      );
+      setRemaining(remaining);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [timer]);
   return (
     <div className="w-full h-full overflow-hidden">
       <GameOverLay phase={phase || {}} />
       {phase && <MafiaTable role={role} />}
+      <div className="z-200 absolute bottom-5 right-5">{remaining}</div>
     </div>
   );
 }

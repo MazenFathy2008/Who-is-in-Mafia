@@ -1,11 +1,13 @@
 import { set, ref, onValue, get, remove } from "firebase/database";
 import { PHASES } from "./phases";
 import { db } from "../../../../config/firebase";
-import { vote } from "./gameEvents";
 export async function startGame(roomId) {
   await set(ref(db, `rooms/${roomId}/phase`), PHASES.SHOW_ROLE);
 }
-
+const clearTimer = async (roomId) => {
+  await remove(ref(db, `rooms/${roomId}/timer`));
+  return;
+};
 export const GAME_FLOW = {
   [PHASES.SHOW_ROLE]: {
     next: PHASES.EVERYONE_WAKE,
@@ -31,6 +33,7 @@ export const GAME_FLOW = {
     next: PHASES.DOCTOR_WAKE,
     duration: 4000,
     event: false,
+    clearTimer:clearTimer
   },
   [PHASES.DOCTOR_WAKE]: {
     next: PHASES.DOCTOR_SLEEP,
@@ -41,6 +44,7 @@ export const GAME_FLOW = {
     next: PHASES.SHOW_RESULT,
     duration: 4000,
     event: false,
+    clearTimer:clearTimer
   },
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
@@ -61,16 +65,16 @@ export const GAME_FLOW = {
     next: PHASES.EVERYONE_WAKE,
     duration: 18000,
     event: true,
+    clearTimer:clearTimer
+
   },
 };
 export const startGameloop = (roomId) => {
   const phaseRef = ref(db, `rooms/${roomId}/phase`);
-  clearTimer(roomId);
-  let time = null;
   const currentPhaseShot = onValue(phaseRef, async (snapshot) => {
-    await clearTimer(roomId);
     const currentPhase = snapshot.val();
     if (currentPhase != PHASES.GAME_OVER && currentPhase) {
+      GAME_FLOW[currentPhase].clearTimer&&GAME_FLOW[currentPhase].clearTimer(roomId)
       if (!GAME_FLOW[currentPhase].event) {
         time = setTimeout(async () => {
           if (currentPhase === PHASES.MAFIA_SLEEP) {
@@ -107,15 +111,16 @@ export const startGameloop = (roomId) => {
   };
 };
 const setTimer = async (roomId, phase) => {
-  await set(ref(db, `rooms/${roomId}/timer`), {
-    startedAt: Date.now(),
-    duration: GAME_FLOW[phase].duration,
-  });
+  const timerRef = ref(db, `rooms/${roomId}/timer`);
+  const isThereTimer = (await get(timerRef)).exists();
+  if (!isThereTimer) {
+    await set(timerRef, {
+      startedAt: Date.now(),
+      duration: GAME_FLOW[phase].duration,
+    });
+  }
 };
-const clearTimer = async (roomId) => {
-  await remove(ref(db, `rooms/${roomId}/timer`));
-  return;
-};
+
 const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
   await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
