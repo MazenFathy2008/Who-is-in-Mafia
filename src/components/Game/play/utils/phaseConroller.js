@@ -24,7 +24,7 @@ export const GAME_FLOW = {
   },
   [PHASES.MAFIA_WAKE]: {
     next: PHASES.MAFIA_SLEEP,
-    duration: 15000,
+    duration: 60000,
     event: true,
   },
   [PHASES.MAFIA_SLEEP]: {
@@ -34,7 +34,7 @@ export const GAME_FLOW = {
   },
   [PHASES.DOCTOR_WAKE]: {
     next: PHASES.DOCTOR_SLEEP,
-    duration: 15000,
+    duration: 60000,
     event: true,
   },
   [PHASES.DOCTOR_SLEEP]: {
@@ -54,7 +54,7 @@ export const GAME_FLOW = {
   },
   [PHASES.VOTING]: {
     next: PHASES.REVEAL_VOTE,
-    duration: 20000,
+    duration: 60000,
     event: true,
   },
   [PHASES.REVEAL_VOTE]: {
@@ -65,9 +65,10 @@ export const GAME_FLOW = {
 };
 export const startGameloop = (roomId) => {
   const phaseRef = ref(db, `rooms/${roomId}/phase`);
+  clearTimer(roomId);
   let time = null;
   const currentPhaseShot = onValue(phaseRef, async (snapshot) => {
-    clearTimeout(time);
+    await clearTimer(roomId);
     const currentPhase = snapshot.val();
     if (currentPhase != PHASES.GAME_OVER && currentPhase) {
       if (!GAME_FLOW[currentPhase].event) {
@@ -86,12 +87,15 @@ export const startGameloop = (roomId) => {
       } else {
         if (currentPhase === PHASES.MAFIA_WAKE) {
           mafiaTurn(roomId, phaseRef, currentPhase);
+          setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
           doctorTurn(roomId, phaseRef, currentPhase);
+          setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.SHOW_RESULT) {
           time = ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
           await votes(roomId, phaseRef, currentPhase);
+          setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.REVEAL_VOTE) {
           time = await revealvote(roomId, phaseRef, currentPhase);
         }
@@ -102,7 +106,16 @@ export const startGameloop = (roomId) => {
     currentPhaseShot();
   };
 };
-
+const setTimer = async (roomId, phase) => {
+  await set(ref(db, `rooms/${roomId}/timer`), {
+    startedAt: Date.now(),
+    duration: GAME_FLOW[phase].duration,
+  });
+};
+const clearTimer = async (roomId) => {
+  await remove(ref(db, `rooms/${roomId}/timer`));
+  return;
+};
 const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
   await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
@@ -167,8 +180,8 @@ const chekIfgameOverAfterResults = async (roomId, phaseRef) => {
     }
   }, 0);
   if (alivePlayers <= 2) {
-    const mafia = (await get(ref(db,`rooms/${roomId}/mafia/id`))).val();
-    const doctor = (await get(ref(db,`rooms/${roomId}/doctor/id`))).val();
+    const mafia = (await get(ref(db, `rooms/${roomId}/mafia/id`))).val();
+    const doctor = (await get(ref(db, `rooms/${roomId}/doctor/id`))).val();
     await set(ref(db, `rooms/${roomId}/winner`), {
       whoWin: "mafia",
       mafia: mafia,
