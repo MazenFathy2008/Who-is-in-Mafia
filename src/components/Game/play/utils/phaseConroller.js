@@ -167,6 +167,13 @@ const chekIfgameOverAfterResults = async (roomId, phaseRef) => {
     }
   }, 0);
   if (alivePlayers <= 2) {
+    const mafia = (await get(ref(db,`rooms/${roomId}/mafia/id`))).val();
+    const doctor = (await get(ref(db,`rooms/${roomId}/doctor/id`))).val();
+    await set(ref(db, `rooms/${roomId}/winner`), {
+      whoWin: "mafia",
+      mafia: mafia,
+      doctor: doctor,
+    });
     set(phaseRef, PHASES.GAME_OVER);
     return false;
   }
@@ -231,7 +238,11 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
   );
 
   if (choosedOne === mafia) {
-    await set(ref(db, `rooms/${roomId}/winner`), "city");
+    await set(ref(db, `rooms/${roomId}/winner`), {
+      whoWin: "city",
+      mafia: mafia,
+      doctor: doctor,
+    });
     setTimeout(() => {
       set(phaseRef, PHASES.GAME_OVER);
     }, duration);
@@ -261,7 +272,11 @@ const chekIfgameOver = async (roomId, phaseRef, players) => {
     return acc;
   }, 0);
   if (totalAlive <= 2) {
-    await set(ref(db, `rooms/${roomId}/winner`), "mafia");
+    await set(ref(db, `rooms/${roomId}/winner`), {
+      whoWin: "mafia",
+      mafia: mafia,
+      doctor: doctor,
+    });
     setTimeout(() => {
       set(phaseRef, PHASES.GAME_OVER);
     }, duration);

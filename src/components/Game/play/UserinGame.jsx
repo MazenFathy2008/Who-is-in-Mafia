@@ -154,13 +154,13 @@ export default function UserInGame() {
       id: PHASES.REVEAL_VOTE,
       stages: [
         {
-          text: "The person who ",
+          text: "",
           color: "text-font",
           shown: true,
           duration: 7000,
         },
         {
-          text: "He was Mafia!",
+          text: "",
           color: "text-Im1",
           shown: true,
           duration: 7000,
@@ -174,7 +174,25 @@ export default function UserInGame() {
         {
           text: "Game Over",
           color: "text-red-500",
-          shown: false,
+          shown: true,
+          duration: 5000,
+        },
+        {
+          text: "",
+          color: "text-Im1",
+          shown: true,
+          duration: 5000,
+        },
+        {
+          text: "",
+          color: "text-Im1",
+          shown: true,
+          duration: 5000,
+        },
+        {
+          text: "",
+          color: "text-blue-500",
+          shown: true,
           duration: 5000,
         },
       ],
@@ -185,7 +203,8 @@ export default function UserInGame() {
   const unsubTarget = useRef(undefined);
   const [votedOn, setVotedOn] = useState(null);
   const unsubVotedOn = useRef(undefined);
-
+  const [winner, setWinner] = useState(null);
+  const unSubWinner = useRef(undefined);
   const isHost = async () => {
     const myRef = ref(db, `rooms/${roomId}/players/${userId}/isHost`);
     const isHost = await get(myRef);
@@ -287,9 +306,10 @@ export default function UserInGame() {
           if (resolve) {
             clearTime = setTimeout(() => {
               set(ref(db, `rooms/${roomId}/isStarted`), false);
-            }, phaseData[PHASES.GAME_OVER].stages[0].duration);
+            }, 20500);
           }
         });
+        unSubWinner.current = gameEvents.getWinner(roomId, setWinner);
       }
       setPhase(phaseData[currentPhase]);
     });
@@ -377,13 +397,26 @@ export default function UserInGame() {
         }
         REVEAL_VOTE.push(currentRevealtemp[1]);
       }
-      console.log(REVEAL_VOTE);
       setPhase({ id: PHASES.REVEAL_VOTE, stages: REVEAL_VOTE });
     }
     return () => {
       unsubVotedOn.current && unsubVotedOn.current();
     };
   }, [votedOn]);
+  useEffect(() => {
+    if (winner) {
+      const GAME_OVER = phaseData[PHASES.GAME_OVER];
+      if (winner.whoWin === "mafia") {
+        GAME_OVER.stages[1].text = "mafia Won";
+      } else {
+        GAME_OVER.stages[1].text = "City Won";
+        GAME_OVER.stages[1].color = "text-blue-500";
+      }
+      GAME_OVER.stages[2].text = `${winner.mafia} was in Mafia`;
+      GAME_OVER.stages[3].text = `${winner.doctor} was The doctor`;
+      setPhase(GAME_OVER)
+    }
+  }, [winner]);
   return (
     <div className="w-full h-full overflow-hidden">
       <GameOverLay phase={phase || {}} />

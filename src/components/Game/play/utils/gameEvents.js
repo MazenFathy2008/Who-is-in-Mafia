@@ -54,3 +54,23 @@ export const getVotes = (roomId, setVoteResult) => {
   });
   return unSub;
 };
+export const getWinner = (roomId, setWinner) => {
+  const winnerRef = ref(db, `rooms/${roomId}/winner`);
+  const unsSubWinner = onValue(winnerRef, async (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      const mafia = (
+        await get(ref(db, `rooms/${roomId}/players/${data.mafia}/username`))
+      ).val();
+      const doctor = (
+        await get(ref(db, `rooms/${roomId}/players/${data.doctor}/username`))
+      ).val();
+      setWinner({
+        ...data,
+        mafia: mafia,
+        doctor: doctor,
+      });
+    }
+  });
+  return unsSubWinner;
+};
