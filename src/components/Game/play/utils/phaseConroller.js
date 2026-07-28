@@ -122,16 +122,36 @@ const setTimer = async (roomId, phase) => {
     });
   }
 };
-
+const calcRemaining = async (roomId) => {
+  const timerRef = ref(db, `rooms/${roomId}/timer`);
+  const timer = (await get(timerRef)).val();
+  const elapsed = Date.now() - timer.startedAt;
+  const remaining = Math.max(0, Math.ceil(timer.duration - elapsed));
+  return remaining;
+};
 const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
   await remove(ref(db, `rooms/${roomId}/eliminatedPlayer`));
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
+  const remaining = await calcRemaining(roomId);
+  let timeOut;
   const unsubMafiaTarget = onValue(mafiaTargetRef, async (snapshot) => {
     if (snapshot.exists()) {
+      clearTimeout(timeOut);
       await set(phaseRef, GAME_FLOW[currentPhase].next);
       unsubMafiaTarget();
     }
   });
+  timeOut = setTimeout(async () => {
+    const mafia = (await get(ref(db, `rooms/${roomId}/mafia/id`))).val();
+    const doctor = (await get(ref(db, `rooms/${roomId}/doctor/id`))).val();
+    await set(ref(db, `rooms/${roomId}/winner`), {
+      whoWin: "city",
+      mafia: mafia,
+      doctor: doctor,
+    });
+    await set(phaseRef, PHASES.GAME_OVER);
+    unsubMafiaTarget();
+  }, remaining + 1000);
 };
 const doctorTurn = async (roomId, phaseRef, currentPhase) => {
   const doctorTargetRef = ref(db, `rooms/${roomId}/doctorTarget`);

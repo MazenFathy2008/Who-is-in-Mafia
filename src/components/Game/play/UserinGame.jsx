@@ -232,6 +232,7 @@ export default function UserInGame() {
                 remove(ref(db, `rooms/${roomId}/reveal-target`)),
                 remove(ref(db, `rooms/${roomId}/winner`)),
                 remove(ref(db, `rooms/${roomId}/eliminatedPlayer`)),
+                remove(ref(db, `rooms/${roomId}/timer`)),
               ]);
               const playersRef = ref(db, `rooms/${roomId}/players`);
               const snapshot = await get(playersRef);
