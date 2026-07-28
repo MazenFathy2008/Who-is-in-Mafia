@@ -20,7 +20,6 @@ export default function MafiaTable({ role }) {
     });
     const amIKilledRef = ref(db, `rooms/${roomId}/players/${userId}/killed`);
     const amIkilledunSub = onValue(amIKilledRef, (snapshot) => {
-      console.log(snapshot.val());
       setKilled(snapshot.val());
     });
     return () => {
@@ -114,6 +113,20 @@ export default function MafiaTable({ role }) {
         className={`relative shadow-[0_0_5px_black] rounded-[50%] bg-red-900 `}
       >
         {listOfPlayers}
+        <p
+          className={`
+          ${killed&&'text-background'}
+          absolute top-1/2 left-1/2
+        -translate-y-1/2
+        -translate-x-1/2
+        text-sm
+        md:text-2xl
+        z-100`
+      }
+        >
+          {killed?"You are killed":"You are  alive"}
+        </p>
+
         <AnimatePresence>
           {shownPlayer && !shownPlayer.killed && (
             <motion.div
@@ -138,6 +151,7 @@ export default function MafiaTable({ role }) {
           text-background
           overflow-y-auto
           overflow-x-hidden
+          z-100
           "
             >
               <button
@@ -197,6 +211,7 @@ export default function MafiaTable({ role }) {
                 shadow-lg text-font  
                 transition-all duration-200
                 flex items-center justify-center
+                z-200
                 `}
                     onClick={() => {
                       phase === PHASES.MAFIA_WAKE && !killed

@@ -83,8 +83,15 @@ export default function GameOverLay({ phase }) {
               }}
               className={`
               ${overLay.color} z-100 font-Jungle absolute top-1/2 
-                  left-1/2 text-8xl -translate-1/2 select-none
+                  left-1/2 md:text-8xl
+                -translate-1/2 select-none
                   md:whitespace-nowrap
+                  w-full
+                  text-center
+                  flex
+                  items-center
+                  justify-center
+                  text-3xl
                   `}
             >
               {overLay.text}
