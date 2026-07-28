@@ -92,11 +92,11 @@ export const startGameloop = (roomId) => {
         }, GAME_FLOW[currentPhase].duration);
       } else {
         if (currentPhase === PHASES.MAFIA_WAKE) {
+          await setTimer(roomId, currentPhase);
           mafiaTurn(roomId, phaseRef, currentPhase);
-          setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.DOCTOR_WAKE) {
+          await setTimer(roomId, currentPhase);
           doctorTurn(roomId, phaseRef, currentPhase);
-          setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.SHOW_RESULT) {
           time = ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
@@ -155,12 +155,19 @@ const mafiaTurn = async (roomId, phaseRef, currentPhase) => {
 };
 const doctorTurn = async (roomId, phaseRef, currentPhase) => {
   const doctorTargetRef = ref(db, `rooms/${roomId}/doctorTarget`);
+  let timeOut;
+  const remaining = await calcRemaining(roomId);
   const unsubDoctorTarget = onValue(doctorTargetRef, async (snapshot) => {
     if (snapshot.exists()) {
+      clearTimeout(timeOut);
       await set(phaseRef, GAME_FLOW[currentPhase].next);
       unsubDoctorTarget();
     }
   });
+  timeOut = setTimeout(async () => {
+    await set(phaseRef, GAME_FLOW[currentPhase].next);
+    unsubDoctorTarget();
+  }, remaining + 1000);
 };
 const ShowResults = async (roomId, phaseRef, currentPhase) => {
   const mafiaTargetRef = ref(db, `rooms/${roomId}/mafiaTarget`);
