@@ -156,13 +156,13 @@ export default function UserInGame() {
       id: PHASES.REVEAL_VOTE,
       stages: [
         {
-          text: "",
+          text: "sas",
           color: "text-font",
           shown: true,
           duration: 7000,
         },
         {
-          text: "",
+          text: "asd",
           color: "text-Im1",
           shown: true,
           duration: 7000,
@@ -376,8 +376,8 @@ export default function UserInGame() {
     };
   }, [target]);
   useEffect(() => {
+    console.log(votedOn);
     if (votedOn) {
-      console.log(votedOn);
       const currentRevealtemp = phaseData[PHASES.REVEAL_VOTE].stages;
       const REVEAL_VOTE = [];
       if (votedOn === "tie") {
@@ -401,10 +401,11 @@ export default function UserInGame() {
         REVEAL_VOTE.push(currentRevealtemp[1]);
       }
       setPhase({ id: PHASES.REVEAL_VOTE, stages: REVEAL_VOTE });
+      return () => {
+        console.log('data')
+        unsubVotedOn.current && unsubVotedOn.current();
+      };
     }
-    return () => {
-      unsubVotedOn.current && unsubVotedOn.current();
-    };
   }, [votedOn]);
   useEffect(() => {
     if (winner) {

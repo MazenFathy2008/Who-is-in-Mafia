@@ -100,6 +100,7 @@ export const startGameloop = (roomId) => {
         } else if (currentPhase === PHASES.SHOW_RESULT) {
           time = ShowResults(roomId, phaseRef, currentPhase);
         } else if (currentPhase === PHASES.VOTING) {
+          await setTimer(roomId, currentPhase);
           await votes(roomId, phaseRef, currentPhase);
           setTimer(roomId, currentPhase);
         } else if (currentPhase === PHASES.REVEAL_VOTE) {
@@ -228,6 +229,8 @@ const chekIfgameOverAfterResults = async (roomId, phaseRef) => {
 };
 const votes = async (roomId, phaseRef, currentPhase) => {
   const votesRef = ref(db, `rooms/${roomId}/votes`);
+  let timeOut;
+  const remaining = await calcRemaining(roomId);
   const unSubVotes = onValue(votesRef, async (snapshot) => {
     if (!snapshot.exists()) return;
     const votesData = snapshot.val();
@@ -237,9 +240,14 @@ const votes = async (roomId, phaseRef, currentPhase) => {
     );
     if (votesData.sum === alivePlayers.length) {
       await set(phaseRef, GAME_FLOW[currentPhase].next);
+      clearTimeout(timeOut);
       unSubVotes();
     }
   });
+  timeOut = setTimeout(async () => {
+    await set(phaseRef, GAME_FLOW[currentPhase].next);
+    unSubVotes();
+  }, remaining + 1000);
 };
 const revealvote = async (roomId, phaseRef, currentPhase) => {
   const playersRef = ref(db, `rooms/${roomId}/players`);
