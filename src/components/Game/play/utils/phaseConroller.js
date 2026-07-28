@@ -33,7 +33,7 @@ export const GAME_FLOW = {
     next: PHASES.DOCTOR_WAKE,
     duration: 4000,
     event: false,
-    clearTimer:clearTimer
+    clearTimer: clearTimer,
   },
   [PHASES.DOCTOR_WAKE]: {
     next: PHASES.DOCTOR_SLEEP,
@@ -44,7 +44,7 @@ export const GAME_FLOW = {
     next: PHASES.SHOW_RESULT,
     duration: 4000,
     event: false,
-    clearTimer:clearTimer
+    clearTimer: clearTimer,
   },
   [PHASES.SHOW_RESULT]: {
     next: PHASES.DISCUSSION,
@@ -65,16 +65,18 @@ export const GAME_FLOW = {
     next: PHASES.EVERYONE_WAKE,
     duration: 18000,
     event: true,
-    clearTimer:clearTimer
-
+    clearTimer: clearTimer,
   },
 };
 export const startGameloop = (roomId) => {
   const phaseRef = ref(db, `rooms/${roomId}/phase`);
+  let time = null;
   const currentPhaseShot = onValue(phaseRef, async (snapshot) => {
+    clearTimeout(time);
     const currentPhase = snapshot.val();
     if (currentPhase != PHASES.GAME_OVER && currentPhase) {
-      GAME_FLOW[currentPhase].clearTimer&&GAME_FLOW[currentPhase].clearTimer(roomId)
+      GAME_FLOW[currentPhase].clearTimer &&
+        GAME_FLOW[currentPhase].clearTimer(roomId);
       if (!GAME_FLOW[currentPhase].event) {
         time = setTimeout(async () => {
           if (currentPhase === PHASES.MAFIA_SLEEP) {
