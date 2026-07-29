@@ -1,4 +1,11 @@
-import { get, onValue, ref, remove, set } from "firebase/database";
+import {
+  get,
+  onDisconnect,
+  onValue,
+  ref,
+  remove,
+  set,
+} from "firebase/database";
 import { useEffect, useState, useRef } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
@@ -227,6 +234,11 @@ export default function UserInGame() {
     const unsubRoom = onValue(roomRef, (snapshot) => {
       if (!snapshot.exists()) {
         remove(myRef);
+      }
+    });
+    isHost().then((resolve) => {
+      if (resolve) {
+        onDisconnect(ref(db, `rooms/${roomId}`)).remove();
       }
     });
     return () => {
