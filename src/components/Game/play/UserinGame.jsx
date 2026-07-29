@@ -1,11 +1,4 @@
-import {
-  get,
-  onDisconnect,
-  onValue,
-  ref,
-  remove,
-  set,
-} from "firebase/database";
+import { get, onValue, ref, remove, set,onDisconnect } from "firebase/database";
 import { useEffect, useState, useRef } from "react";
 import { db } from "../../../config/firebase";
 import { useNavigate, useParams } from "react-router-dom";
@@ -207,7 +200,7 @@ export default function UserInGame() {
       ],
     },
   };
-
+  const [host, setHost] = useState(false);
   const [phase, setPhase] = useState(null);
   const [target, setTarget] = useState(null);
   const unsubTarget = useRef(undefined);
@@ -473,11 +466,34 @@ export default function UserInGame() {
 
     return () => clearInterval(interval);
   }, [timer]);
+  useEffect(() => {
+    isHost().then((resolve) => {
+      if (resolve) {
+        setHost(true);
+      }
+    });
+  }, []);
   return (
     <div className="w-full h-full overflow-hidden">
+      {host && (
+        <button
+        onClick={()=>{
+          set(ref(db,`rooms/${roomId}/isStarted`),false)
+        }}
+          className="w-50 h-20 bg-Im1 rounded-2xl absolute right-10 top-10
+      hover:scale-95
+      active:scale-90
+      transition-all duration-200 
+      "
+        >
+          End Game
+        </button>
+      )}
       <GameOverLay phase={phase || {}} />
       {phase && <MafiaTable role={role} />}
-      <div className="z-200 absolute bottom-5 right-5">{remaining}</div>
+      {timer && (
+        <div className="z-200 absolute bottom-5 right-5">{remaining}</div>
+      )}
     </div>
   );
 }

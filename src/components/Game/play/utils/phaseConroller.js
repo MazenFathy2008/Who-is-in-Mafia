@@ -90,7 +90,7 @@ export const startGameloop = (roomId) => {
       GAME_FLOW[currentPhase].clearTimer &&
         GAME_FLOW[currentPhase].clearTimer(roomId);
       if (!GAME_FLOW[currentPhase].event) {
-        GAME_FLOW[currentPhase].setTimer?.(roomId, currentPhase);
+        // GAME_FLOW[currentPhase].setTimer?.(roomId, currentPhase);
         time = setTimeout(async () => {
           if (currentPhase === PHASES.MAFIA_SLEEP) {
             const doctorKilled = (
