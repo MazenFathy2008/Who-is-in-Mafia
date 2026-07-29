@@ -200,6 +200,7 @@ export default function UserInGame() {
       ],
     },
   };
+
   const [phase, setPhase] = useState(null);
   const [target, setTarget] = useState(null);
   const unsubTarget = useRef(undefined);
@@ -212,7 +213,27 @@ export default function UserInGame() {
     const isHost = await get(myRef);
     return isHost.val();
   };
-
+  useEffect(() => {
+    const myRef = ref(db, `users/${userId}/Play/currentRoom`);
+    const roomRef = ref(db, `rooms/${roomId}/players/${userId}`);
+    const unsubUser = onValue(myRef, async (snapshot) => {
+      if (!snapshot.exists()) {
+        if (await isHost()) {
+          await remove(ref(db, `rooms/${roomId}`));
+        }
+        navigate("/homepage");
+      }
+    });
+    const unsubRoom = onValue(roomRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        remove(myRef);
+      }
+    });
+    return () => {
+      unsubUser();
+      unsubRoom();
+    };
+  }, []);
   useEffect(() => {
     const isStartedRef = ref(db, `rooms/${roomId}/isStarted`);
     const unSub = onValue(isStartedRef, (snapshot) => {
@@ -402,7 +423,7 @@ export default function UserInGame() {
       }
       setPhase({ id: PHASES.REVEAL_VOTE, stages: REVEAL_VOTE });
       return () => {
-        console.log('data')
+        console.log("data");
         unsubVotedOn.current && unsubVotedOn.current();
       };
     }

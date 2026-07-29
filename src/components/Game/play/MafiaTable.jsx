@@ -40,7 +40,7 @@ export default function MafiaTable({ role }) {
     const playersRefrences = ref(db, `rooms/${roomId}/players`);
     const playersUnsub = onValue(playersRefrences, (snapshot) => {
       const data = snapshot.val();
-      Object.keys(data).forEach((key) => {
+      Object.keys(data||{}).forEach((key) => {
         if (key != userId) {
           delete data[key].role;
         }
