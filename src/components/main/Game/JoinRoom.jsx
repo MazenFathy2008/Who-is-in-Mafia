@@ -1,14 +1,14 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { buttonStyles } from "../styles";
-import join from "./utils/joinRoom"
+import join from "./utils/joinRoom";
 import { useParams } from "react-router-dom";
 export default function JoinRoom({ flipped, setFlipped }) {
-  const [roomId, setRoomId] = useState("")
-  const uid = useParams().userId
-  const handleChange=(e)=>{
-    setRoomId( e.target.value)
-  }
+  const [roomId, setRoomId] = useState("");
+  const uid = useParams().userId;
+  const handleChange = (e) => {
+    setRoomId(e.target.value);
+  };
   return (
     <motion.div
       initial={{
@@ -43,11 +43,14 @@ export default function JoinRoom({ flipped, setFlipped }) {
           id="roomId"
           placeholder=""
           value={roomId}
-          onChange={
-          (e)=>{
-              handleChange(e)
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              join(uid, roomId);
             }
-          }
+          }}
+          onChange={(e) => {
+            handleChange(e);
+          }}
           className="border-3
         border-Im1
         focus:border-Im2
@@ -94,11 +97,15 @@ export default function JoinRoom({ flipped, setFlipped }) {
           Enter room Id
         </label>
       </div>
-      <button className={buttonStyles+"w-full"} onClick={
-        ()=>{
-          join(uid,roomId)
-        }
-      } type="button">Join Now</button>
+      <button
+        className={buttonStyles + "w-full"}
+        onClick={() => {
+          join(uid, roomId);
+        }}
+        type="button"
+      >
+        Join Now
+      </button>
       <button
         onClick={() => {
           setFlipped(false);
