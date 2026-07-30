@@ -393,7 +393,6 @@ export default function UserInGame() {
           }
         }
         SHOW_RESULT.push(phaseData[PHASES.SHOW_RESULT].stages[2]);
-        console.log(SHOW_RESULT);
         setPhase({ id: [PHASES.SHOW_RESULT], stages: SHOW_RESULT });
       });
     }
@@ -402,7 +401,6 @@ export default function UserInGame() {
     };
   }, [target]);
   useEffect(() => {
-    console.log(votedOn);
     if (votedOn) {
       const currentRevealtemp = phaseData[PHASES.REVEAL_VOTE].stages;
       const REVEAL_VOTE = [];
@@ -428,7 +426,6 @@ export default function UserInGame() {
       }
       setPhase({ id: PHASES.REVEAL_VOTE, stages: REVEAL_VOTE });
       return () => {
-        console.log("data");
         unsubVotedOn.current && unsubVotedOn.current();
       };
     }

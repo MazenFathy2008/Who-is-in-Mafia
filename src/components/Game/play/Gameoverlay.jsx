@@ -2,7 +2,6 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 export default function GameOverLay({ phase }) {
-  if (phase.id === `reveal-vote`) console.log(phase);
   const currentId = useRef(phase.id);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shown, setShown] = useState(true);
