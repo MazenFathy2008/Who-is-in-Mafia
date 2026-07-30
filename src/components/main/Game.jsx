@@ -27,7 +27,7 @@ export default function Game() {
     perspective-[1000px]
     "
       >
-        <motion.form
+        <motion.div
           animate={{
             rotateY: flipped ? 180 : 0,
           }}
@@ -49,7 +49,7 @@ export default function Game() {
         >
           <CreatRoom flipped={flipped} setFlipped={setFlipped} />
           <JoinRoom flipped={flipped} setFlipped={setFlipped} />
-        </motion.form>
+        </motion.div>
       </div>
     </section>
   );

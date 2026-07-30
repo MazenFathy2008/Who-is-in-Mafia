@@ -50,7 +50,7 @@ export default function Main({ setErrors }) {
         />
         afia
       </motion.h1>
-      <motion.form
+      <motion.div
         animate={{
           rotateY: flipped ? 180 : 0,
         }}
@@ -82,7 +82,7 @@ export default function Main({ setErrors }) {
           time={time + 0.1}
           setFlipped={setFlipped}
         />
-      </motion.form>
+      </motion.div>
     </div>
   );
 }
