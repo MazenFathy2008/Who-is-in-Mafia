@@ -17,7 +17,7 @@ roles:
 
 - mafia
 - doctor
-- citizens
+- citizens <br/>
   The organizor decides who to be the mafia, doctor, and the others are citizens. the
   organizor treats them as a member of city. the game
   starts when the organizor says `all the city sleep`. all the players closed there eyes
