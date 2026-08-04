@@ -115,6 +115,25 @@ After finishing this project I knew what must be next, first I must learn backen
 develpoment, then learning system design. I know that they are two big steps but I 
 will breake them down into more small steps, then I will update this project to be 
 more professional.
+
+## Local Development
+1. Clone the repository
+git clone https://github.com/MazenFathy2008/Who-is-in-Mafia.git
+cd Who-is-in-Mafia
+2. Install dependencies
+bash Sit up
+npm install
+3. Start the development server
+npm run dev
+4. Open your browser and visit:
+http://localhost:5173
+5. Build for production:
+npm run build
+6. Preview production:
+npm run preview
+### Note
+This project already includes the Firebase configuration required to run the application, so there is No additional Firebase setup or environment variables are needed for local development.
+
 ## Ai usage
 At the first of the project Ai was just helping me in debugging to fix the code as  
 fast as possible but when the project started to have a repetitive work or there is a 
